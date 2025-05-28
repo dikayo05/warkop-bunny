@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:warkop_bunny/auth/auth_gate.dart';
-import 'package:warkop_bunny/pages/home_page.dart';
 import 'package:warkop_bunny/themes/light_mode.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
