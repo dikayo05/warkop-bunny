@@ -1,22 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:warkop_bunny/auth/auth_service.dart';
 import 'package:warkop_bunny/components/my_button.dart';
 import 'package:warkop_bunny/components/my_text_field.dart';
+import 'package:warkop_bunny/pages/auth/login_page.dart';
+import 'package:warkop_bunny/pages/main_page.dart';
 
 class RegisterPage extends StatefulWidget {
-  final void Function()? togglePages;
-
-  const RegisterPage({super.key, this.togglePages});
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  // get auth service
+  final AuthService authService = AuthService();
+
   // text controller
-  final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+
+  bool _isLoading = false;
+
+  // Sign up button pressed
+  void signUp() async {
+    final String email = emailController.text;
+    final String password = passwordController.text;
+    final String confirmPassword = confirmPasswordController.text;
+
+    // ensure that the email & password fields are not empty
+    if (email.isNotEmpty && password.isNotEmpty && confirmPassword.isNotEmpty) {
+      // ensure that the passwords match
+      if (password == confirmPassword) {
+        try {
+          setState(() {
+            _isLoading = true;
+          });
+          // sign up logic here
+          await authService.signUpWithEmailPassword(email, password);
+
+          // login otomatis setelah register
+          await authService.signInWithEmailPassword(email, password);
+
+          // navigasi ke MainPage dan hapus semua halaman sebelumnya
+          if (mounted) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainPage()),
+              (route) => false,
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Error: $e")));
+        }
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Passwords don't match")));
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill in all fields")),
+      );
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    // dispose of the text controllers
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   // BUILD UI
   @override
@@ -54,15 +117,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 // email text field
                 MyTextField(
                   controller: emailController,
-                  hintText: "Name",
-                  obscureText: false,
-                ),
-
-                const SizedBox(height: 10),
-
-                // email text field
-                MyTextField(
-                  controller: emailController,
                   hintText: "Email",
                   obscureText: false,
                 ),
@@ -88,7 +142,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 25),
 
                 // register button
-                MyButton(onTap: () {}, text: "Register"),
+                if (_isLoading)
+                  const CircularProgressIndicator()
+                else
+                  // register button
+                  MyButton(onTap: signUp, text: "Register"),
 
                 const SizedBox(height: 50),
 
@@ -97,13 +155,18 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "alrerady have an account?",
+                      "alrerady have an account? ",
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     GestureDetector(
-                      onTap: widget.togglePages,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                      ),
                       child: Text(
                         "Login here",
                         style: TextStyle(
