@@ -2,13 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:warkop_bunny/auth/auth_gate.dart';
 import 'package:warkop_bunny/themes/light_mode.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Load environment variables from .env
+  await dotenv.load(fileName: ".env");
+
+  // Initialize Supabase with values from .env
   await Supabase.initialize(
-    url: 'https://wxwprcxzityepfhmlpsg.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4d3ByY3h6aXR5ZXBmaG1scHNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg0NDUzMDUsImV4cCI6MjA2NDAyMTMwNX0.LRady5Mgs-FZjOGD9fELjkMnnVbZislscD2reWi3A5c',
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
+
   runApp(const MyApp());
 }
 
