@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:warkop_bunny/controller/product_controller.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -8,6 +9,9 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  // productController
+  final productController = ProductController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
