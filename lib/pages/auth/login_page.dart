@@ -13,11 +13,53 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  // get auth service
+  final AuthService authService = AuthService();
+
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
+
+  void _handleLogin() async {
+    final String email = _emailController.text;
+    final String password = _passwordController.text;
+
+    // attempt login..
+    try {
+      // ensure that the email & password fields are not empty
+      if (email.isNotEmpty && password.isNotEmpty) {
+        setState(() {
+          _isLoading = true;
+        });
+        // login logic
+        await authService.signInWithEmailPassword(email, password);
+
+          // navigate to MainPage and remove all previous pages
+        if (mounted) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const MainPage()),
+            (route) => false,
+          );
+        }
+      } else {
+        // display error if some fields are empty
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Silahkan isi Email dan Password")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   void dispose() {
@@ -25,36 +67,6 @@ class _LoginPageState extends State<LoginPage> {
     _passwordController.dispose();
     super.dispose();
   }
-
-  void _handleLogin() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-      
-      // Simulasi proses login
-      await Future.delayed(Duration(seconds: 2));
-      
-      setState(() {
-        _isLoading = false;
-      });
-      
-      // Tampilkan pesan sukses
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Selamat datang di Warkop!'),
-          backgroundColor: Colors.brown[700],
-        ),
-      );
-    }
-  }
-  @override
-  // void dispose() {
-  //   // dispose of the text controllers
-  //   emailController.dispose();
-  //   passwordController.dispose();
-  //   super.dispose();
-  // }
 
   // BUILD UI
   @override

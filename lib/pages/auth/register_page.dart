@@ -13,6 +13,9 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  // get auth service
+  final AuthService authService = AuthService();
+
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -24,6 +27,84 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isLoading = false;
   bool _agreeToTerms = false;
 
+  void _handleRegister() async {
+    final String email = _emailController.text;
+    final String password = _passwordController.text;
+    final String confirmPassword = _confirmPasswordController.text;
+
+    // ensure that the email & password fields are not empty
+    if (email.isNotEmpty && password.isNotEmpty && confirmPassword.isNotEmpty) {
+      // ensure that the passwords match
+      if (password == confirmPassword) {
+        try {
+          setState(() {
+            _isLoading = true;
+          });
+          // sign up logic here
+          await authService.signUpWithEmailPassword(email, password);
+
+          // login otomatis setelah register
+          await authService.signInWithEmailPassword(email, password);
+
+          // navigasi ke MainPage dan hapus semua halaman sebelumnya
+          if (mounted) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainPage()),
+              (route) => false,
+            );
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Error: $e")));
+        }
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Passwords don't match")));
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill in all fields")),
+      );
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+    // if (_formKey.currentState!.validate()) {
+    //   if (!_agreeToTerms) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       SnackBar(
+    //         content: Text('Harap setujui syarat dan ketentuan'),
+    //         backgroundColor: Colors.red[700],
+    //       ),
+    //     );
+    //     return;
+    //   }
+
+    //   setState(() {
+    //     _isLoading = true;
+    //   });
+
+    //   // Simulasi proses register
+    //   await Future.delayed(Duration(seconds: 2));
+
+    //   setState(() {
+    //     _isLoading = false;
+    //   });
+
+    //   // Tampilkan pesan sukses
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //       content: Text('Pendaftaran berhasil! Selamat bergabung di Warkop!'),
+    //       backgroundColor: Colors.green[700],
+    //     ),
+    //   );
+    // }
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -33,48 +114,6 @@ class _RegisterPageState extends State<RegisterPage> {
     _confirmPasswordController.dispose();
     super.dispose();
   }
-
-  void _handleRegister() async {
-    if (_formKey.currentState!.validate()) {
-      if (!_agreeToTerms) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Harap setujui syarat dan ketentuan'),
-            backgroundColor: Colors.red[700],
-          ),
-        );
-        return;
-      }
-
-      setState(() {
-        _isLoading = true;
-      });
-      
-      // Simulasi proses register
-      await Future.delayed(Duration(seconds: 2));
-      
-      setState(() {
-        _isLoading = false;
-      });
-      
-      // Tampilkan pesan sukses
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Pendaftaran berhasil! Selamat bergabung di Warkop!'),
-          backgroundColor: Colors.green[700],
-        ),
-      );
-    }
-  }
-
-  @override
-  // void dispose() {
-  //   // dispose of the text controllers
-  //   emailController.dispose();
-  //   passwordController.dispose();
-  //   confirmPasswordController.dispose();
-  //   super.dispose();
-  // }
 
   // BUILD UI
   @override
@@ -116,9 +155,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.orange[300],
                     ),
                   ),
-                  
+
                   SizedBox(height: 24),
-                  
+
                   // Title
                   Text(
                     'WARKOP BUNNY',
@@ -136,9 +175,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       ],
                     ),
                   ),
-                  
+
                   SizedBox(height: 8),
-                  
+
                   Text(
                     'HALAMAN REGISTER',
                     style: TextStyle(
@@ -147,9 +186,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       fontStyle: FontStyle.italic,
                     ),
                   ),
-                  
+
                   SizedBox(height: 40),
-                  
+
                   // Register Form
                   Container(
                     padding: EdgeInsets.all(24),
@@ -179,7 +218,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               color: Colors.brown[800],
                             ),
                           ),
-                          
+
                           Text(
                             'Isi data diri untuk bergabung',
                             textAlign: TextAlign.center,
@@ -188,22 +227,30 @@ class _RegisterPageState extends State<RegisterPage> {
                               color: Colors.brown[600],
                             ),
                           ),
-                          
+
                           SizedBox(height: 32),
-                          
+
                           // Name Field
                           TextFormField(
                             controller: _nameController,
                             decoration: InputDecoration(
                               labelText: 'Nama Lengkap',
-                              prefixIcon: Icon(Icons.person, color: Colors.brown[700]),
+                              prefixIcon: Icon(
+                                Icons.person,
+                                color: Colors.brown[700],
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide(color: Colors.brown[300]!),
+                                borderSide: BorderSide(
+                                  color: Colors.brown[300]!,
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide(color: Colors.brown[700]!, width: 2),
+                                borderSide: BorderSide(
+                                  color: Colors.brown[700]!,
+                                  width: 2,
+                                ),
                               ),
                               filled: true,
                               fillColor: Colors.brown[50],
@@ -218,23 +265,31 @@ class _RegisterPageState extends State<RegisterPage> {
                               return null;
                             },
                           ),
-                          
+
                           SizedBox(height: 16),
-                          
+
                           // Email Field
                           TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                               labelText: 'Email',
-                              prefixIcon: Icon(Icons.email, color: Colors.brown[700]),
+                              prefixIcon: Icon(
+                                Icons.email,
+                                color: Colors.brown[700],
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide(color: Colors.brown[300]!),
+                                borderSide: BorderSide(
+                                  color: Colors.brown[300]!,
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide(color: Colors.brown[700]!, width: 2),
+                                borderSide: BorderSide(
+                                  color: Colors.brown[700]!,
+                                  width: 2,
+                                ),
                               ),
                               filled: true,
                               fillColor: Colors.brown[50],
@@ -243,29 +298,39 @@ class _RegisterPageState extends State<RegisterPage> {
                               if (value == null || value.isEmpty) {
                                 return 'Email tidak boleh kosong';
                               }
-                              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                              if (!RegExp(
+                                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                              ).hasMatch(value)) {
                                 return 'Format email tidak valid';
                               }
                               return null;
                             },
                           ),
-                          
+
                           SizedBox(height: 16),
-                          
+
                           // Phone Field
                           TextFormField(
                             controller: _phoneController,
                             keyboardType: TextInputType.phone,
                             decoration: InputDecoration(
                               labelText: 'Nomor HP',
-                              prefixIcon: Icon(Icons.phone, color: Colors.brown[700]),
+                              prefixIcon: Icon(
+                                Icons.phone,
+                                color: Colors.brown[700],
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide(color: Colors.brown[300]!),
+                                borderSide: BorderSide(
+                                  color: Colors.brown[300]!,
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide(color: Colors.brown[700]!, width: 2),
+                                borderSide: BorderSide(
+                                  color: Colors.brown[700]!,
+                                  width: 2,
+                                ),
                               ),
                               filled: true,
                               fillColor: Colors.brown[50],
@@ -280,19 +345,24 @@ class _RegisterPageState extends State<RegisterPage> {
                               return null;
                             },
                           ),
-                          
+
                           SizedBox(height: 16),
-                          
+
                           // Password Field
                           TextFormField(
                             controller: _passwordController,
                             obscureText: _obscurePassword,
                             decoration: InputDecoration(
                               labelText: 'Password',
-                              prefixIcon: Icon(Icons.lock, color: Colors.brown[700]),
+                              prefixIcon: Icon(
+                                Icons.lock,
+                                color: Colors.brown[700],
+                              ),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                                  _obscurePassword
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
                                   color: Colors.brown[700],
                                 ),
                                 onPressed: () {
@@ -303,11 +373,16 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide(color: Colors.brown[300]!),
+                                borderSide: BorderSide(
+                                  color: Colors.brown[300]!,
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide(color: Colors.brown[700]!, width: 2),
+                                borderSide: BorderSide(
+                                  color: Colors.brown[700]!,
+                                  width: 2,
+                                ),
                               ),
                               filled: true,
                               fillColor: Colors.brown[50],
@@ -322,34 +397,45 @@ class _RegisterPageState extends State<RegisterPage> {
                               return null;
                             },
                           ),
-                          
+
                           SizedBox(height: 16),
-                          
+
                           // Confirm Password Field
                           TextFormField(
                             controller: _confirmPasswordController,
                             obscureText: _obscureConfirmPassword,
                             decoration: InputDecoration(
                               labelText: 'Konfirmasi Password',
-                              prefixIcon: Icon(Icons.lock_outline, color: Colors.brown[700]),
+                              prefixIcon: Icon(
+                                Icons.lock_outline,
+                                color: Colors.brown[700],
+                              ),
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                                  _obscureConfirmPassword
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
                                   color: Colors.brown[700],
                                 ),
                                 onPressed: () {
                                   setState(() {
-                                    _obscureConfirmPassword = !_obscureConfirmPassword;
+                                    _obscureConfirmPassword =
+                                        !_obscureConfirmPassword;
                                   });
                                 },
                               ),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide(color: Colors.brown[300]!),
+                                borderSide: BorderSide(
+                                  color: Colors.brown[300]!,
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide(color: Colors.brown[700]!, width: 2),
+                                borderSide: BorderSide(
+                                  color: Colors.brown[700]!,
+                                  width: 2,
+                                ),
                               ),
                               filled: true,
                               fillColor: Colors.brown[50],
@@ -364,11 +450,11 @@ class _RegisterPageState extends State<RegisterPage> {
                               return null;
                             },
                           ),
-                          
+
                           SizedBox(height: 16),
-                          
+
                           SizedBox(height: 24),
-                          
+
                           // Register Button
                           ElevatedButton(
                             onPressed: _isLoading ? null : _handleRegister,
@@ -387,7 +473,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
                                     ),
                                   )
                                 : Text(
@@ -399,13 +487,15 @@ class _RegisterPageState extends State<RegisterPage> {
                                     ),
                                   ),
                           ),
-                          
+
                           SizedBox(height: 16),
-                          
+
                           // Divider
                           Row(
                             children: [
-                              Expanded(child: Divider(color: Colors.brown[300])),
+                              Expanded(
+                                child: Divider(color: Colors.brown[300]),
+                              ),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16),
                                 child: Text(
@@ -413,12 +503,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                   style: TextStyle(color: Colors.brown[600]),
                                 ),
                               ),
-                              Expanded(child: Divider(color: Colors.brown[300])),
+                              Expanded(
+                                child: Divider(color: Colors.brown[300]),
+                              ),
                             ],
                           ),
-                          
+
                           SizedBox(height: 16),
-                          
+
                           // Login Button
                           OutlinedButton(
                             onPressed: () {
@@ -446,9 +538,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
-                  
+
                   SizedBox(height: 32),
-                  
+
                   // Footer
                   Text(
                     '☕ Powered by Warkop Bunny ☕',
