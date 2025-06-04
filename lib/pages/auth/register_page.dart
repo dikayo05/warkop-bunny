@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:warkop_bunny/auth/auth_service.dart';
-import 'package:warkop_bunny/components/my_button.dart';
-import 'package:warkop_bunny/components/my_text_field.dart';
 import 'package:warkop_bunny/pages/auth/login_page.dart';
 import 'package:warkop_bunny/pages/main_page.dart';
 
@@ -25,7 +23,6 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
-  bool _agreeToTerms = false;
 
   void _handleRegister() async {
     final String email = _emailController.text;
@@ -73,36 +70,6 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() {
       _isLoading = false;
     });
-    // if (_formKey.currentState!.validate()) {
-    //   if (!_agreeToTerms) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Text('Harap setujui syarat dan ketentuan'),
-    //         backgroundColor: Colors.red[700],
-    //       ),
-    //     );
-    //     return;
-    //   }
-
-    //   setState(() {
-    //     _isLoading = true;
-    //   });
-
-    //   // Simulasi proses register
-    //   await Future.delayed(Duration(seconds: 2));
-
-    //   setState(() {
-    //     _isLoading = false;
-    //   });
-
-    //   // Tampilkan pesan sukses
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: Text('Pendaftaran berhasil! Selamat bergabung di Warkop!'),
-    //       backgroundColor: Colors.green[700],
-    //     ),
-    //   );
-    // }
   }
 
   @override
@@ -514,8 +481,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           // Login Button
                           OutlinedButton(
                             onPressed: () {
-                              // Handle back to login
-                              Navigator.pop(context);
+                              // Navigasi ke halaman Login
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginPage(),
+                                ),
+                              );
                             },
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.brown[700],
