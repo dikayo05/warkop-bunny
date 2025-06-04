@@ -16,16 +16,15 @@ class _LoginPageState extends State<LoginPage> {
   // get auth service
   final AuthService authService = AuthService();
 
-  // text controller
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
   bool _isLoading = false;
 
-  // login button pressed
-  Future<void> login() async {
-    final String email = emailController.text;
-    final String password = passwordController.text;
+  void _handleLogin() async {
+    final String email = _emailController.text;
+    final String password = _passwordController.text;
 
     // attempt login..
     try {
@@ -48,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         // display error if some fields are empty
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please enter both email and password")),
+          const SnackBar(content: Text("Silahkan isi Email dan Password")),
         );
       }
     } catch (e) {
@@ -64,101 +63,311 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    // dispose of the text controllers
-    emailController.dispose();
-    passwordController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
   // BUILD UI
   @override
   Widget build(BuildContext context) {
-    // SCAFFOLD
     return Scaffold(
-      // BODY
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Login'),
-
-                // logo
-                Icon(
-                  Icons.lock_open_rounded,
-                  size: 80,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-
-                const SizedBox(height: 50),
-
-                // welcome back message
-                Text(
-                  "Welcome back, you've been missed!",
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 16,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF8B4513), // Saddle Brown
+              Color(0xFF654321), // Dark Brown
+              Color(0xFF3E2723), // Very Dark Brown
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Logo Warkop
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.local_cafe,
+                      size: 80,
+                      color: Colors.orange[300],
+                    ),
                   ),
-                ),
+                  
+                  SizedBox(height: 24),
+                  
+                  // Title
+                  Text(
+                    'WARKOP BUNNY',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 2.0,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(2, 2),
+                          blurRadius: 4,
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  SizedBox(height: 8),
 
-                const SizedBox(height: 25),
-
-                // email text field
-                MyTextField(
-                  controller: emailController,
-                  hintText: "Email",
-                  obscureText: false,
-                ),
-
-                const SizedBox(height: 10),
-
-                // password text field
-                MyTextField(
-                  controller: passwordController,
-                  hintText: "Password",
-                  obscureText: true,
-                ),
-
-                const SizedBox(height: 25),
-
-                // login button
-                if (_isLoading)
-                  const CircularProgressIndicator()
-                else
-                  MyButton(onTap: login, text: "Login"),
-
-                const SizedBox(height: 50),
-
-                // not a member? register now button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "don't have any account? ",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
+                  Text(
+                    'HALAMAN LOGIN',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.orange[200],
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  
+                  SizedBox(height: 40),
+                  
+                  // Login Form
+                  Container(
+                    padding: EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.95),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 10,
+                          offset: Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Welcome Text
+                          Text(
+                            'Selamat Datang!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.brown[800],
+                            ),
+                          ),
+                          
+                          Text(
+                            'Silakan login untuk melanjutkan',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.brown[600],
+                            ),
+                          ),
+                          
+                          SizedBox(height: 32),
+                          
+                          // Email Field
+                          TextFormField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              prefixIcon: Icon(Icons.email, color: Colors.brown[700]),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide(color: Colors.brown[300]!),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide(color: Colors.brown[700]!, width: 2),
+                              ),
+                              filled: true,
+                              fillColor: Colors.brown[50],
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Email tidak boleh kosong';
+                              }
+                              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                                return 'Format email tidak valid';
+                              }
+                              return null;
+                            },
+                          ),
+                          
+                          SizedBox(height: 16),
+                          
+                          // Password Field
+                          TextFormField(
+                            controller: _passwordController,
+                            obscureText: _obscurePassword,
+                            decoration: InputDecoration(
+                              labelText: 'Password',
+                              prefixIcon: Icon(Icons.lock, color: Colors.brown[700]),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                                  color: Colors.brown[700],
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide(color: Colors.brown[300]!),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide(color: Colors.brown[700]!, width: 2),
+                              ),
+                              filled: true,
+                              fillColor: Colors.brown[50],
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Password tidak boleh kosong';
+                              }
+                              if (value.length < 6) {
+                                return 'Password minimal 6 karakter';
+                              }
+                              return null;
+                            },
+                          ),
+                          
+                          SizedBox(height: 8),
+                          
+                          // Forgot Password
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {
+                                // Handle forgot password
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Fitur lupa password belum tersedia')),
+                                );
+                              },
+                              child: Text(
+                                'Ubah Password?',
+                                style: TextStyle(color: Colors.brown[700]),
+                              ),
+                            ),
+                          ),
+                          
+                          SizedBox(height: 24),
+                          
+                          // Login Button
+                          ElevatedButton(
+                            onPressed: _isLoading ? null : _handleLogin,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.brown[700],
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              elevation: 5,
+                            ),
+                            child: _isLoading
+                                ? SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                : Text(
+                                    'MASUK',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.0,
+                                    ),
+                                  ),
+                          ),
+                          
+                          SizedBox(height: 16),
+                          
+                          // Divider
+                          Row(
+                            children: [
+                              Expanded(child: Divider(color: Colors.brown[300])),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  'atau',
+                                  style: TextStyle(color: Colors.brown[600]),
+                                ),
+                              ),
+                              Expanded(child: Divider(color: Colors.brown[300])),
+                            ],
+                          ),
+                          
+                          SizedBox(height: 16),
+                          
+                          // Register Button
+                          OutlinedButton(
+                            onPressed: () {
+                              // Navigasi ke halaman RegisterPage
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => RegisterPage()),
+                              );
+                            },
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.brown[700],
+                              side: BorderSide(color: Colors.brown[700]!),
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            child: Text(
+                              'DAFTAR',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RegisterPage(),
-                        ),
-                      ),
-                      child: Text(
-                        "Register here",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.inversePrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                  ),
+                  
+                  SizedBox(height: 32),
+                  
+                  // Footer
+                  Text(
+                    '☕ Powered by Warkop Bunny ☕',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 12,
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
