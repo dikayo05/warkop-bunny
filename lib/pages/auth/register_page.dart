@@ -517,7 +517,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   Text(
                     '☕ Powered by Warkop Bunny ☕',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withAlpha(200),
                       fontSize: 12,
                     ),
                   ),
