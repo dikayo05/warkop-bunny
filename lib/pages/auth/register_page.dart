@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:warkop_bunny/auth/auth_service.dart';
+import 'package:warkop_bunny/pages/auth/login_page.dart';
 import 'package:warkop_bunny/pages/main_page.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -22,7 +23,6 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
-  bool _agreeToTerms = false;
 
   void _handleRegister() async {
     final String email = _emailController.text;
@@ -511,8 +511,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           // Login Button
                           OutlinedButton(
                             onPressed: () {
-                              // Handle back to login
-                              Navigator.pop(context);
+                              // Navigasi ke halaman Login
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginPage(),
+                                ),
+                              );
                             },
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.brown[700],
@@ -542,7 +547,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   Text(
                     '☕ Powered by Warkop Bunny ☕',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withAlpha(200),
                       fontSize: 12,
                     ),
                   ),

@@ -49,6 +49,7 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Error: $e")));
@@ -93,10 +94,10 @@ class _LoginPageState extends State<LoginPage> {
                   Container(
                     padding: EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withAlpha(24),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withAlpha(68),
                         width: 2,
                       ),
                     ),
@@ -121,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                         Shadow(
                           offset: Offset(2, 2),
                           blurRadius: 4,
-                          color: Colors.black.withOpacity(0.5),
+                          color: Colors.black.withAlpha(127),
                         ),
                       ],
                     ),
@@ -144,11 +145,11 @@ class _LoginPageState extends State<LoginPage> {
                   Container(
                     padding: EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
+                      color: Colors.white.withAlpha(238),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withAlpha(68),
                           blurRadius: 10,
                           offset: Offset(0, 5),
                         ),
@@ -326,7 +327,7 @@ class _LoginPageState extends State<LoginPage> {
                           // Register Button
                           OutlinedButton(
                             onPressed: () {
-                              // Navigasi ke halaman RegisterPage
+                              // Navigasi ke halaman Register
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) => RegisterPage()),
@@ -360,7 +361,7 @@ class _LoginPageState extends State<LoginPage> {
                   Text(
                     '☕ Powered by Warkop Bunny ☕',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withAlpha(200),
                       fontSize: 12,
                     ),
                   ),
