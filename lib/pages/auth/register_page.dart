@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:warkop_bunny/auth/auth_service.dart';
-import 'package:warkop_bunny/components/my_button.dart';
-import 'package:warkop_bunny/components/my_text_field.dart';
-import 'package:warkop_bunny/pages/auth/login_page.dart';
 import 'package:warkop_bunny/pages/main_page.dart';
 
 class RegisterPage extends StatefulWidget {
