@@ -1,7 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:warkop_bunny/models/product.dart';
 
-class ProductController {
+class ProductService {
   // Database -> products
   final product = Supabase.instance.client.from('products');
 
@@ -21,7 +21,7 @@ class ProductController {
 
   // Update
   Future updateProduct(Product oldProduct, Product newProduct) async {
-    // await product.update(updatedProduct.toMap()).eq('id', oldProduct.id!);
+    await product.update(newProduct.toMap()).eq('id', oldProduct.id!);
   }
 
   // Delete

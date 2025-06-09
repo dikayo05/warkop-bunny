@@ -1,47 +1,46 @@
 class Product {
   int? id;
-  String createdAt;
-  String updatedAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
   String productName;
-  String category;
-  int sellingPrice;
-  int purchasePrice;
-  int stock;
-  String unit;
+  String? category;
+  int? sellingPrice;
+  int? purchasePrice;
+  int? stock;
+  String? unit;
 
   Product({
     this.id,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
     required this.productName,
-    required this.category,
-    required this.sellingPrice,
-    required this.purchasePrice,
-    required this.stock,
-    required this.unit,
+    this.category,
+    this.sellingPrice,
+    this.purchasePrice,
+    this.stock,
+    this.unit,
   });
 
   // map -> product
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
-      id: map['id'],
-      createdAt: map['created_at'],
-      updatedAt: map['updated_at'],
-      productName: map['product_name'],
-      category: map['category'],
-      sellingPrice: map['selling_price'],
-      purchasePrice: map['purchase_price'],
-      stock: map['stock'],
-      unit: map['unit'],
+      id: map['id'] as int,
+      createdAt: map['created_at'] as DateTime,
+      updatedAt: map['updated_at'] as DateTime,
+      productName: map['product_name'] as String,
+      category: map['category'] as String,
+      sellingPrice: map['selling_price'] as int,
+      purchasePrice: map['purchase_price'] as int,
+      stock: map['stock'] as int,
+      unit: map['unit'] as String,
     );
   }
 
   // product -> map
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'created_at': createdAt,
-      'updated_at': updatedAt,
+      // 'created_at': createdAt,
+      // 'updated_at': updatedAt,
       'product_name': productName,
       'category': category,
       'selling_price': sellingPrice,
