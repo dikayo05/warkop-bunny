@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:warkop_bunny/models/product.dart';
 import 'package:warkop_bunny/models/raw_material.dart';
 import 'package:warkop_bunny/models/sale.dart';
+import 'package:warkop_bunny/widgets/delete_confirmation_dialog.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -1284,11 +1285,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         _showProductForm(context, product: product);
                         break;
                       case 'delete':
-                        _showDeleteConfirmation(
+                        showDeleteConfirmationDialog(
                           context,
-                          'Hapus Produk',
-                          'Apakah Anda yakin ingin menghapus ${product.name}?',
-                          () => _deleteProduct(product.id),
+                          title: 'Hapus Produk',
+                          message: 'Apakah Anda yakin ingin menghapus ${product.name}?',
+                          onConfirm: () => _deleteProduct(product.id),
                         );
                         break;
                     }
@@ -1492,11 +1493,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         _showRawMaterialForm(context, material: material);
                         break;
                       case 'delete':
-                        _showDeleteConfirmation(
+                        showDeleteConfirmationDialog(
                           context,
-                          'Hapus Bahan Baku',
-                          'Apakah Anda yakin ingin menghapus ${material.name}?',
-                          () => _deleteRawMaterial(material.id),
+                          title: 'Hapus Bahan Baku',
+                          message: 'Apakah Anda yakin ingin menghapus ${material.name}?',
+                          onConfirm: () => _deleteRawMaterial(material.id),
                         );
                         break;
                     }
@@ -1742,11 +1743,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         _showSaleForm(context, sale: sale);
                         break;
                       case 'delete':
-                        _showDeleteConfirmation(
+                        showDeleteConfirmationDialog(
                           context,
-                          'Hapus Penjualan',
-                          'Apakah Anda yakin ingin menghapus data penjualan ini?',
-                          () => _deleteSale(sale.id),
+                          title: 'Hapus Penjualan',
+                          message: 'Apakah Anda yakin ingin menghapus data penjualan ini?',
+                          onConfirm: () => _deleteSale(sale.id),
                         );
                         break;
                     }
@@ -2895,35 +2896,23 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             Text('Laporan & Analisis'),
           ],
         ),
-        content: Column(
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.trending_up, color: Color(0xFF2E8B57)),
-              title: const Text('Laporan Penjualan'),
-              subtitle: Text('Total hari ini: ${_formatCurrency(todaySales)}'),
-              onTap: () {
-                Navigator.pop(context);
-                _showSalesReport();
-              },
+              leading: Icon(Icons.trending_up, color: Color(0xFF2E8B57)),
+              title: Text('Laporan Penjualan'),
+              // subtitle: Text('Total hari ini: ${_formatCurrency(0)}'),
             ),
             ListTile(
-              leading: const Icon(Icons.inventory_2, color: Color(0xFF4682B4)),
-              title: const Text('Laporan Stok'),
-              subtitle: Text('$totalProducts produk, $lowStockProducts stok rendah'),
-              onTap: () {
-                Navigator.pop(context);
-                _showStockReport();
-              },
+              leading: Icon(Icons.inventory_2, color: Color(0xFF4682B4)),
+              title: Text('Laporan Stok'),
+              subtitle: Text('Jumlah produk dan bahan baku'),
             ),
             ListTile(
-              leading: const Icon(Icons.attach_money, color: Color(0xFFFF8C00)),
-              title: const Text('Laporan Keuangan'),
-              subtitle: const Text('Pendapatan dan pengeluaran'),
-              onTap: () {
-                Navigator.pop(context);
-                _showFinancialReport();
-              },
+              leading: Icon(Icons.attach_money, color: Color(0xFFFF8C00)),
+              title: Text('Laporan Keuangan'),
+              subtitle: Text('Pendapatan dan pengeluaran'),
             ),
           ],
         ),
@@ -3141,8 +3130,4 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         return Icons.fastfood;
     }
   }
-}
-
-class _showDeleteConfirmation {
-  _showDeleteConfirmation(BuildContext context, String s, String t, void Function() param3);
 }

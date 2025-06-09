@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:warkop_bunny/auth/auth_service.dart';
+import 'package:warkop_bunny/services/auth_service.dart';
 import 'package:warkop_bunny/pages/auth/register_page.dart';
 import 'package:warkop_bunny/pages/main_page.dart';
 

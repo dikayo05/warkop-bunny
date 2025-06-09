@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:warkop_bunny/auth/auth_service.dart';
+import 'package:warkop_bunny/services/auth_service.dart';
 import 'package:warkop_bunny/pages/auth/login_page.dart';
 
 class ProfileTab extends StatefulWidget {
