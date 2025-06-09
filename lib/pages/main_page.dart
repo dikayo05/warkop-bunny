@@ -75,7 +75,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         id: '1',
         name: 'Kopi Hitam',
         category: 'Minuman Panas',
-        price: 8000,
+        sellingPrice: 8000,
         stock: 50,
         unit: 'gelas',
         description: 'Kopi hitam original dengan biji pilihan',
@@ -85,7 +85,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         id: '2',
         name: 'Es Kopi Susu',
         category: 'Minuman Dingin',
-        price: 12000,
+        sellingPrice: 12000,
         stock: 8,
         unit: 'gelas',
         description: 'Perpaduan kopi dan susu segar dengan es',
@@ -95,7 +95,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         id: '3',
         name: 'Mie Ayam',
         category: 'Makanan',
-        price: 15000,
+        sellingPrice: 15000,
         stock: 25,
         unit: 'porsi',
         description: 'Mie ayam dengan topping lengkap',
@@ -105,7 +105,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         id: '4',
         name: 'Nasi Goreng',
         category: 'Makanan',
-        price: 18000,
+        sellingPrice: 18000,
         stock: 30,
         unit: 'porsi',
         description: 'Nasi goreng spesial dengan telur',
@@ -115,7 +115,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         id: '5',
         name: 'Teh Manis',
         category: 'Minuman Panas',
-        price: 5000,
+        sellingPrice: 5000,
         stock: 5,
         unit: 'gelas',
         description: 'Teh manis hangat tradisional',
@@ -1335,7 +1335,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     children: [
                       const Text('Harga', style: TextStyle(fontSize: 12, color: Colors.grey)),
                       Text(
-                        'Rp ${product.price.toStringAsFixed(0)}',
+                        'Rp ${product.sellingPrice.toStringAsFixed(0)}',
                         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                       ),
                     ],
@@ -1866,7 +1866,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void _showProductForm(BuildContext context, {Product? product}) {
     final nameController = TextEditingController(text: product?.name ?? '');
     final categoryController = TextEditingController(text: product?.category ?? '');
-    final priceController = TextEditingController(text: product?.price.toString() ?? '');
+    final priceController = TextEditingController(text: product?.sellingPrice.toString() ?? '');
     final stockController = TextEditingController(text: product?.stock.toString() ?? '');
     final unitController = TextEditingController(text: product?.unit ?? '');
     final descriptionController = TextEditingController(text: product?.description ?? '');
@@ -1991,7 +1991,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   id: product?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
                   name: nameController.text,
                   category: selectedCategory,
-                  price: double.parse(priceController.text),
+                  sellingPrice: double.parse(priceController.text),
                   stock: int.parse(stockController.text),
                   unit: unitController.text,
                   description: descriptionController.text,
@@ -2229,7 +2229,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           void updateTotal() {
             if (selectedProductId != null && quantityController.text.isNotEmpty) {
               final product = products.firstWhere((p) => p.id == selectedProductId);
-              unitPrice = product.price;
+              unitPrice = product.sellingPrice;
               final quantity = double.tryParse(quantityController.text) ?? 0;
               totalPrice = unitPrice * quantity;
             }
@@ -2267,7 +2267,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             children: [
                               Text(product.name),
                               Text(
-                                'Stok: ${product.stock} ${product.unit} - Rp ${product.price.toStringAsFixed(0)}',
+                                'Stok: ${product.stock} ${product.unit} - Rp ${product.sellingPrice.toStringAsFixed(0)}',
                                 style: const TextStyle(fontSize: 12, color: Colors.grey),
                               ),
                             ],

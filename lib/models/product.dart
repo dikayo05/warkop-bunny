@@ -2,7 +2,7 @@ class Product {
   String id;
   String name;
   String category;
-  double price;
+  double sellingPrice;
   int stock;
   String unit;
   String description;
@@ -13,7 +13,7 @@ class Product {
     required this.id,
     required this.name,
     required this.category,
-    required this.price,
+    required this.sellingPrice,
     required this.stock,
     required this.unit,
     required this.description,
@@ -27,7 +27,8 @@ class Product {
       id: map['id'].toString(),
       name: map['name'],
       category: map['category'],
-      price: (map['price'] as num).toDouble(),
+      // price: (map['price'] as num).toDouble(),
+      sellingPrice: (map['selling_price'] as num).toDouble(),
       stock: map['stock'],
       unit: map['unit'],
       description: map['description'],
@@ -42,7 +43,7 @@ class Product {
       'id': id,
       'name': name,
       'category': category,
-      'price': price,
+      'selling_price': sellingPrice,
       'stock': stock,
       'unit': unit,
       'description': description,
