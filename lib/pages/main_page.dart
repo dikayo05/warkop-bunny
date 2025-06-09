@@ -529,13 +529,16 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   Widget _buildStatsGrid(bool isTablet) {
     final crossAxisCount = isTablet ? 6 : 2;
+    // Perbaiki aspect ratio untuk mencegah overflow
+    final aspectRatio = isTablet ? 0.9 : 1.1;
+    
     return GridView.count(
       crossAxisCount: crossAxisCount,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisSpacing: 12,
       mainAxisSpacing: 12,
-      childAspectRatio: isTablet ? 1.2 : 1.5,
+      childAspectRatio: aspectRatio, // Aspect ratio yang lebih baik
       children: [
         _buildStatCard(
           'Total Produk',
@@ -545,14 +548,14 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           'items',
         ),
         _buildStatCard(
-          'Stok Rendah Produk',
+          isTablet ? 'Stok Rendah Produk' : 'Stok Rendah',
           lowStockProducts.toString(),
           Icons.warning_amber,
           const Color(0xFFFF8C00),
           'items',
         ),
         _buildStatCard(
-          'Total Bahan Baku',
+          isTablet ? 'Total Bahan Baku' : 'Bahan Baku',
           totalRawMaterials.toString(),
           Icons.inventory_2,
           const Color(0xFF4682B4),
@@ -566,14 +569,14 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           'items',
         ),
         _buildStatCard(
-          'Penjualan Hari Ini',
+          isTablet ? 'Penjualan Hari Ini' : 'Penjualan',
           _formatCurrency(todaySales),
           Icons.trending_up,
           const Color(0xFF32CD32),
           '',
         ),
         _buildStatCard(
-          'Pesanan Hari Ini',
+          isTablet ? 'Pesanan Hari Ini' : 'Pesanan',
           todayOrders.toString(),
           Icons.receipt_long,
           const Color(0xFF9370DB),
@@ -585,7 +588,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   Widget _buildStatCard(String title, String value, IconData icon, Color color, String suffix) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12), // Kurangi padding
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -600,7 +603,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribusi ruang yang merata
         children: [
+          // Header dengan icon dan trend arrow
           Row(
             children: [
               Container(
@@ -609,36 +614,65 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(icon, color: color, size: 24),
+                child: Icon(icon, color: color, size: 20), // Ukuran icon lebih kecil
               ),
               const Spacer(),
-              Icon(Icons.trending_up, color: color.withOpacity(0.6), size: 16),
+              Icon(Icons.trending_up, color: color.withOpacity(0.6), size: 14), // Icon trend lebih kecil
             ],
           ),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: color,
+          
+          // Content area yang flexible
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Value dengan FittedBox untuk mencegah overflow
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 18, // Font size yang lebih kecil
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                      height: 1.0,
+                    ),
+                    maxLines: 1,
+                  ),
+                ),
+                
+                const SizedBox(height: 4),
+                
+                // Title dengan overflow handling
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 11, // Font size yang lebih kecil
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500,
+                    height: 1.1,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          
+          // Suffix di bagian bawah jika ada
           if (suffix.isNotEmpty)
-            Text(
-              suffix,
-              style: TextStyle(
-                fontSize: 10,
-                color: color.withOpacity(0.7),
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(
+                suffix,
+                style: TextStyle(
+                  fontSize: 9,
+                  color: color.withOpacity(0.7),
+                  fontWeight: FontWeight.w400,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
         ],
@@ -737,81 +771,87 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Widget _buildMainMenuGrid(BuildContext context, bool isTablet) {
-    final crossAxisCount = isTablet ? 3 : 2;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Menu Utama',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF2D3748),
-          ),
-        ),
-        const SizedBox(height: 16),
-        GridView.count(
-          crossAxisCount: crossAxisCount,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: isTablet ? 1.3 : 1.1,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final crossAxisCount = isTablet ? 3 : 2;
+        
+        // Hitung ukuran card berdasarkan lebar layar
+        final cardWidth = (screenWidth - 48 - (crossAxisCount - 1) * 16) / crossAxisCount;
+        final cardHeight = cardWidth * 0.85; // Aspect ratio 0.85 untuk lebih tinggi
+        
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildMenuCard(
-              'Manajemen Stok Produk',
-              'Kelola menu makanan, minuman, dan produk lainnya',
-              Icons.restaurant_menu,
-              const Color(0xFF2E8B57),
-              () => _navigateToProductStock(context),
+            const Text(
+              'Menu Utama',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF2D3748),
+              ),
             ),
-            _buildMenuCard(
-              'Stok Bahan Baku',
-              'Monitor bahan baku dan supplies warkop',
-              Icons.inventory_2,
-              const Color(0xFF4682B4),
-              () => _navigateToRawMaterials(context),
+            const SizedBox(height: 16),
+            GridView.count(
+              crossAxisCount: crossAxisCount,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: cardWidth / cardHeight, // Gunakan ratio yang dihitung
+              children: [
+                _buildMenuCard(
+                  'Manajemen Stok Produk',
+                  'Kelola menu makanan, minuman, dan produk lainnya',
+                  Icons.restaurant_menu,
+                  const Color(0xFF2E8B57),
+                  () => _navigateToProductStock(context),
+                  cardWidth,
+                ),
+                _buildMenuCard(
+                  'Stok Bahan Baku',
+                  'Monitor bahan baku dan supplies warkop',
+                  Icons.inventory_2,
+                  const Color(0xFF4682B4),
+                  () => _navigateToRawMaterials(context),
+                  cardWidth,
+                ),
+                _buildMenuCard(
+                  'Pencatatan Penjualan',
+                  'Catat transaksi dan kelola penjualan harian',
+                  Icons.point_of_sale,
+                  const Color(0xFFFF8C00),
+                  () => _navigateToSalesRecord(context),
+                  cardWidth,
+                ),
+                _buildMenuCard(
+                  'Laporan & Analisis',
+                  'Lihat laporan keuangan dan analisis bisnis',
+                  Icons.analytics,
+                  const Color(0xFF9370DB),
+                  () => _showReportsDialog(context),
+                  cardWidth,
+                ),
+              ],
             ),
-            _buildMenuCard(
-              'Pencatatan Penjualan',
-              'Catat transaksi dan kelola penjualan harian',
-              Icons.point_of_sale,
-              const Color(0xFFFF8C00),
-              () => _navigateToSalesRecord(context),
-            ),
-            _buildMenuCard(
-              'Laporan & Analisis',
-              'Lihat laporan keuangan dan analisis bisnis',
-              Icons.analytics,
-              const Color(0xFF9370DB),
-              () => _showReportsDialog(context),
-            ),
-            // _buildMenuCard(
-            //   'Manajemen Karyawan',
-            //   'Kelola data karyawan dan jadwal kerja',
-            //   Icons.people,
-            //   const Color(0xFFDC143C),
-            //   () => _showComingSoonDialog(context, 'Manajemen Karyawan'),
-            // ),
-            // _buildMenuCard(
-            //   'Pengaturan Sistem',
-            //   'Konfigurasi aplikasi dan backup data',
-            //   Icons.settings,
-            //   const Color(0xFF708090),
-            //   () => _showComingSoonDialog(context, 'Pengaturan Sistem'),
-            // ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 
-  Widget _buildMenuCard(String title, String subtitle, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildMenuCard(String title, String subtitle, IconData icon, Color color, VoidCallback onTap, double cardWidth) {
+    // Hitung ukuran responsif berdasarkan lebar card
+    final iconSize = (cardWidth * 0.15).clamp(20.0, 28.0);
+    final titleFontSize = (cardWidth * 0.08).clamp(12.0, 16.0);
+    final subtitleFontSize = (cardWidth * 0.06).clamp(10.0, 12.0);
+    final padding = (cardWidth * 0.1).clamp(12.0, 20.0);
+    
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -826,43 +866,57 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min, // Penting: gunakan mainAxisSize.min
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(icon, color: color, size: 32),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF2D3748),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              subtitle,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-                height: 1.4,
-              ),
-            ),
-            const Spacer(),
+            // Header dengan icon dan arrow
             Row(
               children: [
+                Container(
+                  padding: EdgeInsets.all(padding * 0.6),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: color, size: iconSize),
+                ),
                 const Spacer(),
                 Icon(
                   Icons.arrow_forward_ios,
                   color: color.withOpacity(0.6),
-                  size: 16,
+                  size: 12,
                 ),
               ],
+            ),
+            
+            SizedBox(height: padding * 0.7),
+            
+            // Title
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: titleFontSize,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF2D3748),
+                height: 1.1,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            
+            SizedBox(height: padding * 0.3),
+            
+            // Subtitle dengan batasan tinggi yang jelas
+            Expanded(
+              child: Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: subtitleFontSize,
+                  color: Colors.grey,
+                  height: 1.2,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),
