@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:warkop_bunny/models/product.dart';
 import 'package:warkop_bunny/models/raw_material.dart';
 import 'package:warkop_bunny/models/sale.dart';
+import 'package:warkop_bunny/pages/auth/login_page.dart';
+import 'package:warkop_bunny/services/auth_service.dart';
 import 'package:warkop_bunny/widgets/delete_confirmation_dialog.dart';
 
 class MainPage extends StatefulWidget {
@@ -27,13 +29,15 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   int get totalProducts => products.length;
   int get lowStockProducts => products.where((p) => p.stock <= 10).length;
   int get totalRawMaterials => rawMaterials.length;
-  int get lowStockMaterials => rawMaterials.where((m) => m.stock <= m.minStock).length;
+  int get lowStockMaterials =>
+      rawMaterials.where((m) => m.stock <= m.minStock).length;
   double get todaySales => sales
       .where((s) => _isSameDay(s.saleDate, DateTime.now()))
       .fold(0.0, (sum, s) => sum + s.totalPrice);
-  int get todayOrders => sales
-      .where((s) => _isSameDay(s.saleDate, DateTime.now()))
-      .length;
+  int get todayOrders =>
+      sales.where((s) => _isSameDay(s.saleDate, DateTime.now())).length;
+
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
@@ -49,7 +53,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
+
     _fabAnimationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
@@ -64,7 +68,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
 
     _fabAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fabAnimationController, curve: Curves.elasticOut),
+      CurvedAnimation(
+        parent: _fabAnimationController,
+        curve: Curves.elasticOut,
+      ),
     );
   }
 
@@ -305,10 +312,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               ),
               Text(
                 'Sistem Manajemen Terpadu',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.white70, fontSize: 12),
               ),
             ],
           ),
@@ -319,7 +323,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           onPressed: () => _showNotifications(context),
           icon: Stack(
             children: [
-              const Icon(Icons.notifications_outlined, color: Colors.white, size: 26),
+              const Icon(
+                Icons.notifications_outlined,
+                color: Colors.white,
+                size: 26,
+              ),
               Positioned(
                 right: 0,
                 top: 0,
@@ -329,7 +337,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     color: const Color(0xFFFF6B35),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                  constraints: const BoxConstraints(
+                    minWidth: 16,
+                    minHeight: 16,
+                  ),
                   child: Text(
                     '${lowStockProducts + lowStockMaterials}',
                     style: const TextStyle(
@@ -349,11 +360,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           icon: const CircleAvatar(
             radius: 14,
             backgroundColor: Colors.white,
-            child: Icon(
-              Icons.person,
-              color: Color(0xFF8B4513),
-              size: 18,
-            ),
+            child: Icon(Icons.person, color: Color(0xFF8B4513), size: 18),
           ),
         ),
         const SizedBox(width: 8),
@@ -395,7 +402,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(20),
@@ -462,7 +472,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     final crossAxisCount = isTablet ? 6 : 2;
     // Perbaiki aspect ratio untuk mencegah overflow
     final aspectRatio = isTablet ? 0.9 : 1.1;
-    
+
     return GridView.count(
       crossAxisCount: crossAxisCount,
       shrinkWrap: true,
@@ -517,7 +527,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color, String suffix) {
+  Widget _buildStatCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+    String suffix,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12), // Kurangi padding
       decoration: BoxDecoration(
@@ -534,7 +550,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribusi ruang yang merata
+        mainAxisAlignment:
+            MainAxisAlignment.spaceBetween, // Distribusi ruang yang merata
         children: [
           // Header dengan icon dan trend arrow
           Row(
@@ -545,13 +562,21 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(icon, color: color, size: 20), // Ukuran icon lebih kecil
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 20,
+                ), // Ukuran icon lebih kecil
               ),
               const Spacer(),
-              Icon(Icons.trending_up, color: color.withOpacity(0.6), size: 14), // Icon trend lebih kecil
+              Icon(
+                Icons.trending_up,
+                color: color.withOpacity(0.6),
+                size: 14,
+              ), // Icon trend lebih kecil
             ],
           ),
-          
+
           // Content area yang flexible
           Expanded(
             child: Column(
@@ -572,9 +597,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     maxLines: 1,
                   ),
                 ),
-                
+
                 const SizedBox(height: 4),
-                
+
                 // Title dengan overflow handling
                 Text(
                   title,
@@ -590,7 +615,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               ],
             ),
           ),
-          
+
           // Suffix di bagian bawah jika ada
           if (suffix.isNotEmpty)
             Padding(
@@ -666,7 +691,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildQuickActionButton(String title, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildQuickActionButton(
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return Container(
       margin: const EdgeInsets.only(right: 12),
       child: InkWell(
@@ -706,11 +736,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
         final crossAxisCount = isTablet ? 3 : 2;
-        
+
         // Hitung ukuran card berdasarkan lebar layar
-        final cardWidth = (screenWidth - 48 - (crossAxisCount - 1) * 16) / crossAxisCount;
-        final cardHeight = cardWidth * 0.85; // Aspect ratio 0.85 untuk lebih tinggi
-        
+        final cardWidth =
+            (screenWidth - 48 - (crossAxisCount - 1) * 16) / crossAxisCount;
+        final cardHeight =
+            cardWidth * 0.85; // Aspect ratio 0.85 untuk lebih tinggi
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -729,7 +761,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               physics: const NeverScrollableScrollPhysics(),
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: cardWidth / cardHeight, // Gunakan ratio yang dihitung
+              childAspectRatio:
+                  cardWidth / cardHeight, // Gunakan ratio yang dihitung
               children: [
                 _buildMenuCard(
                   'Manajemen Stok Produk',
@@ -771,13 +804,20 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildMenuCard(String title, String subtitle, IconData icon, Color color, VoidCallback onTap, double cardWidth) {
+  Widget _buildMenuCard(
+    String title,
+    String subtitle,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+    double cardWidth,
+  ) {
     // Hitung ukuran responsif berdasarkan lebar card
     final iconSize = (cardWidth * 0.15).clamp(20.0, 28.0);
     final titleFontSize = (cardWidth * 0.08).clamp(12.0, 16.0);
     final subtitleFontSize = (cardWidth * 0.06).clamp(10.0, 12.0);
     final padding = (cardWidth * 0.1).clamp(12.0, 20.0);
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
@@ -818,9 +858,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 ),
               ],
             ),
-            
+
             SizedBox(height: padding * 0.7),
-            
+
             // Title
             Text(
               title,
@@ -833,9 +873,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            
+
             SizedBox(height: padding * 0.3),
-            
+
             // Subtitle dengan batasan tinggi yang jelas
             Expanded(
               child: Text(
@@ -928,15 +968,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildActivityItem(String title, String time, IconData icon, Color color) {
+  Widget _buildActivityItem(
+    String title,
+    String time,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.withOpacity(0.1),
-            width: 1,
-          ),
+          bottom: BorderSide(color: Colors.grey.withOpacity(0.1), width: 1),
         ),
       ),
       child: Row(
@@ -965,10 +1007,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 const SizedBox(height: 4),
                 Text(
                   time,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),
@@ -993,14 +1032,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         icon: const Icon(Icons.add, color: Colors.white),
         label: const Text(
           'Quick Action',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       ),
     );
   }
@@ -1036,9 +1070,29 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   // Helper Methods
   String _getCurrentDateString() {
     final now = DateTime.now();
-    final days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-    final months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
-                   'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    final days = [
+      'Minggu',
+      'Senin',
+      'Selasa',
+      'Rabu',
+      'Kamis',
+      'Jumat',
+      'Sabtu',
+    ];
+    final months = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
+    ];
     return '${days[now.weekday % 7]}, ${now.day} ${months[now.month - 1]} ${now.year}';
   }
 
@@ -1058,8 +1112,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   bool _isSameDay(DateTime date1, DateTime date2) {
     return date1.year == date2.year &&
-           date1.month == date2.month &&
-           date1.day == date2.day;
+        date1.month == date2.month &&
+        date1.day == date2.day;
   }
 
   String _getProductUnit(String productId) {
@@ -1073,7 +1127,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   String _getTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inMinutes < 60) {
       return '${difference.inMinutes} menit yang lalu';
     } else if (difference.inHours < 24) {
@@ -1168,7 +1222,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     setState(() {
       final saleToDelete = sales.firstWhere((s) => s.id == saleId);
       // Restore product stock
-      final productIndex = products.indexWhere((p) => p.id == saleToDelete.productId);
+      final productIndex = products.indexWhere(
+        (p) => p.id == saleToDelete.productId,
+      );
       if (productIndex != -1) {
         products[productIndex].stock += saleToDelete.quantity;
       }
@@ -1204,11 +1260,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 padding: const EdgeInsets.all(20),
                 child: Row(
                   children: [
-                    const Icon(Icons.restaurant_menu, color: Color(0xFF2E8B57), size: 28),
+                    const Icon(
+                      Icons.restaurant_menu,
+                      color: Color(0xFF2E8B57),
+                      size: 28,
+                    ),
                     const SizedBox(width: 12),
                     const Text(
                       'Manajemen Stok Produk',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const Spacer(),
                     FloatingActionButton.small(
@@ -1221,7 +1284,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               ),
               Expanded(
                 child: products.isEmpty
-                    ? _buildEmptyState('Belum ada produk', 'Tambahkan produk pertama Anda')
+                    ? _buildEmptyState(
+                        'Belum ada produk',
+                        'Tambahkan produk pertama Anda',
+                      )
                     : ListView.builder(
                         controller: scrollController,
                         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -1269,11 +1335,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     children: [
                       Text(
                         product.name,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Text(
                         product.category,
-                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -1288,7 +1360,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         showDeleteConfirmationDialog(
                           context,
                           title: 'Hapus Produk',
-                          message: 'Apakah Anda yakin ingin menghapus ${product.name}?',
+                          message:
+                              'Apakah Anda yakin ingin menghapus ${product.name}?',
                           onConfirm: () => _deleteProduct(product.id),
                         );
                         break;
@@ -1333,10 +1406,16 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Harga', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      const Text(
+                        'Harga',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
                       Text(
                         'Rp ${product.sellingPrice.toStringAsFixed(0)}',
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -1345,7 +1424,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Stok', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      const Text(
+                        'Stok',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
                       Row(
                         children: [
                           Text(
@@ -1358,7 +1440,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           ),
                           if (isLowStock) ...[
                             const SizedBox(width: 4),
-                            const Icon(Icons.warning, color: Colors.red, size: 16),
+                            const Icon(
+                              Icons.warning,
+                              color: Colors.red,
+                              size: 16,
+                            ),
                           ],
                         ],
                       ),
@@ -1377,7 +1463,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 ),
                 child: const Text(
                   'Stok Rendah!',
-                  style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],
@@ -1413,11 +1503,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 padding: const EdgeInsets.all(20),
                 child: Row(
                   children: [
-                    const Icon(Icons.inventory_2, color: Color(0xFF4682B4), size: 28),
+                    const Icon(
+                      Icons.inventory_2,
+                      color: Color(0xFF4682B4),
+                      size: 28,
+                    ),
                     const SizedBox(width: 12),
                     const Text(
                       'Stok Bahan Baku',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const Spacer(),
                     FloatingActionButton.small(
@@ -1430,7 +1527,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               ),
               Expanded(
                 child: rawMaterials.isEmpty
-                    ? _buildEmptyState('Belum ada bahan baku', 'Tambahkan bahan baku pertama Anda')
+                    ? _buildEmptyState(
+                        'Belum ada bahan baku',
+                        'Tambahkan bahan baku pertama Anda',
+                      )
                     : ListView.builder(
                         controller: scrollController,
                         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -1450,8 +1550,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   Widget _buildRawMaterialCard(RawMaterial material) {
     final isLowStock = material.stock <= material.minStock;
-    final isExpiringSoon = material.expiryDate.difference(DateTime.now()).inDays <= 30;
-    
+    final isExpiringSoon =
+        material.expiryDate.difference(DateTime.now()).inDays <= 30;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -1477,11 +1578,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     children: [
                       Text(
                         material.name,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Text(
                         material.supplier,
-                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -1496,7 +1603,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         showDeleteConfirmationDialog(
                           context,
                           title: 'Hapus Bahan Baku',
-                          message: 'Apakah Anda yakin ingin menghapus ${material.name}?',
+                          message:
+                              'Apakah Anda yakin ingin menghapus ${material.name}?',
                           onConfirm: () => _deleteRawMaterial(material.id),
                         );
                         break;
@@ -1534,7 +1642,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Stok Saat Ini', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      const Text(
+                        'Stok Saat Ini',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
                       Row(
                         children: [
                           Text(
@@ -1547,7 +1658,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           ),
                           if (isLowStock) ...[
                             const SizedBox(width: 4),
-                            const Icon(Icons.warning, color: Colors.red, size: 16),
+                            const Icon(
+                              Icons.warning,
+                              color: Colors.red,
+                              size: 16,
+                            ),
                           ],
                         ],
                       ),
@@ -1558,10 +1673,16 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Min. Stok', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      const Text(
+                        'Min. Stok',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
                       Text(
                         '${material.minStock} ${material.unit}',
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -1575,10 +1696,16 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Harga', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      const Text(
+                        'Harga',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
                       Text(
                         'Rp ${material.price.toStringAsFixed(0)}',
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),
@@ -1587,7 +1714,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Kadaluarsa', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      const Text(
+                        'Kadaluarsa',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
                       Text(
                         _formatDate(material.expiryDate),
                         style: TextStyle(
@@ -1609,26 +1739,40 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 children: [
                   if (isLowStock)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.red.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Text(
                         'Perlu Restok!',
-                        style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   if (isExpiringSoon)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.orange.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Text(
                         'Segera Kadaluarsa',
-                        style: TextStyle(color: Colors.orange, fontSize: 12, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                 ],
@@ -1666,11 +1810,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 padding: const EdgeInsets.all(20),
                 child: Row(
                   children: [
-                    const Icon(Icons.point_of_sale, color: Color(0xFFFF8C00), size: 28),
+                    const Icon(
+                      Icons.point_of_sale,
+                      color: Color(0xFFFF8C00),
+                      size: 28,
+                    ),
                     const SizedBox(width: 12),
                     const Text(
                       'Pencatatan Penjualan',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const Spacer(),
                     FloatingActionButton.small(
@@ -1683,13 +1834,19 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               ),
               Expanded(
                 child: sales.isEmpty
-                    ? _buildEmptyState('Belum ada penjualan', 'Catat penjualan pertama Anda')
+                    ? _buildEmptyState(
+                        'Belum ada penjualan',
+                        'Catat penjualan pertama Anda',
+                      )
                     : ListView.builder(
                         controller: scrollController,
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         itemCount: sales.length,
                         itemBuilder: (context, index) {
-                          final sale = sales[sales.length - 1 - index]; // Show newest first
+                          final sale =
+                              sales[sales.length -
+                                  1 -
+                                  index]; // Show newest first
                           return _buildSaleCard(sale);
                         },
                       ),
@@ -1718,7 +1875,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     color: const Color(0xFFFF8C00).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.shopping_cart, color: Color(0xFFFF8C00)),
+                  child: const Icon(
+                    Icons.shopping_cart,
+                    color: Color(0xFFFF8C00),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -1727,11 +1887,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     children: [
                       Text(
                         sale.productName,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Text(
                         sale.customerName,
-                        style: const TextStyle(color: Colors.grey, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -1746,7 +1912,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         showDeleteConfirmationDialog(
                           context,
                           title: 'Hapus Penjualan',
-                          message: 'Apakah Anda yakin ingin menghapus data penjualan ini?',
+                          message:
+                              'Apakah Anda yakin ingin menghapus data penjualan ini?',
                           onConfirm: () => _deleteSale(sale.id),
                         );
                         break;
@@ -1784,10 +1951,16 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Jumlah', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      const Text(
+                        'Jumlah',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
                       Text(
                         '${sale.quantity} items',
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -1796,10 +1969,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Total', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      const Text(
+                        'Total',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
                       Text(
                         'Rp ${sale.totalPrice.toStringAsFixed(0)}',
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF2E8B57)),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF2E8B57),
+                        ),
                       ),
                     ],
                   ),
@@ -1808,10 +1988,16 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Pembayaran', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      const Text(
+                        'Pembayaran',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
                       Text(
                         sale.paymentMethod,
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -1834,11 +2020,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.inbox_outlined,
-            size: 80,
-            color: Colors.grey[400],
-          ),
+          Icon(Icons.inbox_outlined, size: 80, color: Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
             title,
@@ -1851,10 +2033,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           const SizedBox(height: 8),
           Text(
             subtitle,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
             textAlign: TextAlign.center,
           ),
         ],
@@ -1865,11 +2044,19 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   // Form Methods
   void _showProductForm(BuildContext context, {Product? product}) {
     final nameController = TextEditingController(text: product?.name ?? '');
-    final categoryController = TextEditingController(text: product?.category ?? '');
-    final priceController = TextEditingController(text: product?.sellingPrice.toString() ?? '');
-    final stockController = TextEditingController(text: product?.stock.toString() ?? '');
+    final categoryController = TextEditingController(
+      text: product?.category ?? '',
+    );
+    final priceController = TextEditingController(
+      text: product?.sellingPrice.toString() ?? '',
+    );
+    final stockController = TextEditingController(
+      text: product?.stock.toString() ?? '',
+    );
     final unitController = TextEditingController(text: product?.unit ?? '');
-    final descriptionController = TextEditingController(text: product?.description ?? '');
+    final descriptionController = TextEditingController(
+      text: product?.description ?? '',
+    );
 
     String selectedCategory = product?.category ?? 'Minuman Panas';
     final categories = ['Minuman Panas', 'Minuman Dingin', 'Makanan', 'Snack'];
@@ -1986,9 +2173,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ),
           ElevatedButton(
             onPressed: () {
-              if (_validateProductForm(nameController, categoryController, priceController, stockController, unitController, descriptionController)) {
+              if (_validateProductForm(
+                nameController,
+                categoryController,
+                priceController,
+                stockController,
+                unitController,
+                descriptionController,
+              )) {
                 final newProduct = Product(
-                  id: product?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+                  id:
+                      product?.id ??
+                      DateTime.now().millisecondsSinceEpoch.toString(),
                   name: nameController.text,
                   category: selectedCategory,
                   sellingPrice: double.parse(priceController.text),
@@ -2006,7 +2202,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 Navigator.pop(context);
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2E8B57)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2E8B57),
+            ),
             child: Text(
               product == null ? 'Tambah' : 'Update',
               style: const TextStyle(color: Colors.white),
@@ -2019,12 +2217,21 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   void _showRawMaterialForm(BuildContext context, {RawMaterial? material}) {
     final nameController = TextEditingController(text: material?.name ?? '');
-    final supplierController = TextEditingController(text: material?.supplier ?? '');
-    final stockController = TextEditingController(text: material?.stock.toString() ?? '');
+    final supplierController = TextEditingController(
+      text: material?.supplier ?? '',
+    );
+    final stockController = TextEditingController(
+      text: material?.stock.toString() ?? '',
+    );
     final unitController = TextEditingController(text: material?.unit ?? '');
-    final minStockController = TextEditingController(text: material?.minStock.toString() ?? '');
-    final priceController = TextEditingController(text: material?.price.toString() ?? '');
-    DateTime selectedExpiryDate = material?.expiryDate ?? DateTime.now().add(const Duration(days: 365));
+    final minStockController = TextEditingController(
+      text: material?.minStock.toString() ?? '',
+    );
+    final priceController = TextEditingController(
+      text: material?.price.toString() ?? '',
+    );
+    DateTime selectedExpiryDate =
+        material?.expiryDate ?? DateTime.now().add(const Duration(days: 365));
 
     showDialog(
       context: context,
@@ -2038,7 +2245,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   color: const Color(0xFF4682B4),
                 ),
                 const SizedBox(width: 8),
-                Text(material == null ? 'Tambah Bahan Baku' : 'Edit Bahan Baku'),
+                Text(
+                  material == null ? 'Tambah Bahan Baku' : 'Edit Bahan Baku',
+                ),
               ],
             ),
             content: SingleChildScrollView(
@@ -2126,7 +2335,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           context: context,
                           initialDate: selectedExpiryDate,
                           firstDate: DateTime.now(),
-                          lastDate: DateTime.now().add(const Duration(days: 1825)),
+                          lastDate: DateTime.now().add(
+                            const Duration(days: 1825),
+                          ),
                         );
                         if (date != null) {
                           setState(() {
@@ -2143,14 +2354,20 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.calendar_today, color: Colors.grey),
+                            const Icon(
+                              Icons.calendar_today,
+                              color: Colors.grey,
+                            ),
                             const SizedBox(width: 12),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
                                   'Tanggal Kadaluarsa',
-                                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                                 Text(
                                   _formatDate(selectedExpiryDate),
@@ -2173,9 +2390,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               ),
               ElevatedButton(
                 onPressed: () {
-                  if (_validateRawMaterialForm(nameController, supplierController, stockController, unitController, minStockController, priceController)) {
+                  if (_validateRawMaterialForm(
+                    nameController,
+                    supplierController,
+                    stockController,
+                    unitController,
+                    minStockController,
+                    priceController,
+                  )) {
                     final newMaterial = RawMaterial(
-                      id: material?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+                      id:
+                          material?.id ??
+                          DateTime.now().millisecondsSinceEpoch.toString(),
                       name: nameController.text,
                       supplier: supplierController.text,
                       stock: int.parse(stockController.text),
@@ -2194,7 +2420,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     Navigator.pop(context);
                   }
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4682B4)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4682B4),
+                ),
                 child: Text(
                   material == null ? 'Tambah' : 'Update',
                   style: const TextStyle(color: Colors.white),
@@ -2209,8 +2437,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   void _showSaleForm(BuildContext context, {Sale? sale}) {
     String? selectedProductId = sale?.productId;
-    final quantityController = TextEditingController(text: sale?.quantity.toString() ?? '');
-    final customerNameController = TextEditingController(text: sale?.customerName ?? '');
+    final quantityController = TextEditingController(
+      text: sale?.quantity.toString() ?? '',
+    );
+    final customerNameController = TextEditingController(
+      text: sale?.customerName ?? '',
+    );
     String selectedPaymentMethod = sale?.paymentMethod ?? 'Tunai';
     final paymentMethods = ['Tunai', 'Transfer', 'Kartu Kredit', 'E-Wallet'];
 
@@ -2227,8 +2459,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           void updateTotal() {
-            if (selectedProductId != null && quantityController.text.isNotEmpty) {
-              final product = products.firstWhere((p) => p.id == selectedProductId);
+            if (selectedProductId != null &&
+                quantityController.text.isNotEmpty) {
+              final product = products.firstWhere(
+                (p) => p.id == selectedProductId,
+              );
               unitPrice = product.sellingPrice;
               final quantity = double.tryParse(quantityController.text) ?? 0;
               totalPrice = unitPrice * quantity;
@@ -2268,7 +2503,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                               Text(product.name),
                               Text(
                                 'Stok: ${product.stock} ${product.unit} - Rp ${product.sellingPrice.toStringAsFixed(0)}',
-                                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ],
                           ),
@@ -2331,7 +2569,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                         color: const Color(0xFF2E8B57).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: const Color(0xFF2E8B57).withOpacity(0.3)),
+                        border: Border.all(
+                          color: const Color(0xFF2E8B57).withOpacity(0.3),
+                        ),
                       ),
                       child: Column(
                         children: [
@@ -2341,7 +2581,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                               const Text('Harga Satuan:'),
                               Text(
                                 'Rp ${unitPrice.toStringAsFixed(0)}',
-                                style: const TextStyle(fontWeight: FontWeight.w600),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ],
                           ),
@@ -2349,7 +2591,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Total:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                              const Text(
+                                'Total:',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               Text(
                                 'Rp ${totalPrice.toStringAsFixed(0)}',
                                 style: const TextStyle(
@@ -2374,11 +2622,19 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               ),
               ElevatedButton(
                 onPressed: () {
-                  if (_validateSaleForm(selectedProductId, quantityController, customerNameController)) {
+                  if (_validateSaleForm(
+                    selectedProductId,
+                    quantityController,
+                    customerNameController,
+                  )) {
                     final newSale = Sale(
-                      id: sale?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+                      id:
+                          sale?.id ??
+                          DateTime.now().millisecondsSinceEpoch.toString(),
                       productId: selectedProductId!,
-                      productName: products.firstWhere((p) => p.id == selectedProductId).name,
+                      productName: products
+                          .firstWhere((p) => p.id == selectedProductId)
+                          .name,
                       quantity: int.parse(quantityController.text),
                       unitPrice: unitPrice,
                       totalPrice: totalPrice,
@@ -2395,7 +2651,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     Navigator.pop(context);
                   }
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF8C00)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFF8C00),
+                ),
                 child: Text(
                   sale == null ? 'Catat' : 'Update',
                   style: const TextStyle(color: Colors.white),
@@ -2421,12 +2679,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       _showErrorSnackBar('Nama produk harus diisi');
       return false;
     }
-    if (price.text.isEmpty || double.tryParse(price.text) == null || double.parse(price.text) <= 0) {
+    if (price.text.isEmpty ||
+        double.tryParse(price.text) == null ||
+        double.parse(price.text) <= 0) {
       _showErrorSnackBar('Harga harus berupa angka valid dan lebih dari 0');
       return false;
     }
-    if (stock.text.isEmpty || int.tryParse(stock.text) == null || int.parse(stock.text) < 0) {
-      _showErrorSnackBar('Stok harus berupa angka valid dan tidak boleh negatif');
+    if (stock.text.isEmpty ||
+        int.tryParse(stock.text) == null ||
+        int.parse(stock.text) < 0) {
+      _showErrorSnackBar(
+        'Stok harus berupa angka valid dan tidak boleh negatif',
+      );
       return false;
     }
     if (unit.text.trim().isEmpty) {
@@ -2456,19 +2720,29 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       _showErrorSnackBar('Supplier harus diisi');
       return false;
     }
-    if (stock.text.isEmpty || int.tryParse(stock.text) == null || int.parse(stock.text) < 0) {
-      _showErrorSnackBar('Stok harus berupa angka valid dan tidak boleh negatif');
+    if (stock.text.isEmpty ||
+        int.tryParse(stock.text) == null ||
+        int.parse(stock.text) < 0) {
+      _showErrorSnackBar(
+        'Stok harus berupa angka valid dan tidak boleh negatif',
+      );
       return false;
     }
     if (unit.text.trim().isEmpty) {
       _showErrorSnackBar('Satuan harus diisi');
       return false;
     }
-    if (minStock.text.isEmpty || int.tryParse(minStock.text) == null || int.parse(minStock.text) < 0) {
-      _showErrorSnackBar('Minimum stok harus berupa angka valid dan tidak boleh negatif');
+    if (minStock.text.isEmpty ||
+        int.tryParse(minStock.text) == null ||
+        int.parse(minStock.text) < 0) {
+      _showErrorSnackBar(
+        'Minimum stok harus berupa angka valid dan tidak boleh negatif',
+      );
       return false;
     }
-    if (price.text.isEmpty || double.tryParse(price.text) == null || double.parse(price.text) <= 0) {
+    if (price.text.isEmpty ||
+        double.tryParse(price.text) == null ||
+        double.parse(price.text) <= 0) {
       _showErrorSnackBar('Harga harus berupa angka valid dan lebih dari 0');
       return false;
     }
@@ -2484,7 +2758,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       _showErrorSnackBar('Produk harus dipilih');
       return false;
     }
-    if (quantity.text.isEmpty || int.tryParse(quantity.text) == null || int.parse(quantity.text) <= 0) {
+    if (quantity.text.isEmpty ||
+        int.tryParse(quantity.text) == null ||
+        int.parse(quantity.text) <= 0) {
       _showErrorSnackBar('Jumlah harus berupa angka valid dan lebih dari 0');
       return false;
     }
@@ -2497,7 +2773,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     final product = products.firstWhere((p) => p.id == productId);
     final requestedQty = int.parse(quantity.text);
     if (product.stock < requestedQty) {
-      _showErrorSnackBar('Stok tidak mencukupi! Tersedia: ${product.stock} ${product.unit}');
+      _showErrorSnackBar(
+        'Stok tidak mencukupi! Tersedia: ${product.stock} ${product.unit}',
+      );
       return false;
     }
 
@@ -2543,9 +2821,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   // Modal and Dialog Methods
   void _showNotifications(BuildContext context) {
     final lowStockProductsList = products.where((p) => p.stock <= 10).toList();
-    final lowStockMaterialsList = rawMaterials.where((m) => m.stock <= m.minStock).toList();
-    final expiringSoonMaterials = rawMaterials.where((m) => 
-        m.expiryDate.difference(DateTime.now()).inDays <= 30).toList();
+    final lowStockMaterialsList = rawMaterials
+        .where((m) => m.stock <= m.minStock)
+        .toList();
+    final expiringSoonMaterials = rawMaterials
+        .where((m) => m.expiryDate.difference(DateTime.now()).inDays <= 30)
+        .toList();
 
     showModalBottomSheet(
       context: context,
@@ -2589,57 +2870,95 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   if (lowStockProductsList.isNotEmpty) ...[
                     const Text(
                       'Produk Stok Rendah',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.red),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
                     ),
                     const SizedBox(height: 8),
-                    ...lowStockProductsList.map((product) => ListTile(
-                      leading: const Icon(Icons.warning_amber, color: Colors.red),
-                      title: Text(product.name),
-                      subtitle: Text('Stok: ${product.stock} ${product.unit}'),
-                      trailing: const Text('Rendah', style: TextStyle(color: Colors.red)),
-                    )),
+                    ...lowStockProductsList.map(
+                      (product) => ListTile(
+                        leading: const Icon(
+                          Icons.warning_amber,
+                          color: Colors.red,
+                        ),
+                        title: Text(product.name),
+                        subtitle: Text(
+                          'Stok: ${product.stock} ${product.unit}',
+                        ),
+                        trailing: const Text(
+                          'Rendah',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 16),
                   ],
-                  
+
                   // Low stock materials
                   if (lowStockMaterialsList.isNotEmpty) ...[
                     const Text(
                       'Bahan Baku Perlu Restok',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.orange),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange,
+                      ),
                     ),
                     const SizedBox(height: 8),
-                    ...lowStockMaterialsList.map((material) => ListTile(
-                      leading: const Icon(Icons.priority_high, color: Colors.orange),
-                      title: Text(material.name),
-                      subtitle: Text('Stok: ${material.stock}/${material.minStock} ${material.unit}'),
-                      trailing: const Text('Restok', style: TextStyle(color: Colors.orange)),
-                    )),
+                    ...lowStockMaterialsList.map(
+                      (material) => ListTile(
+                        leading: const Icon(
+                          Icons.priority_high,
+                          color: Colors.orange,
+                        ),
+                        title: Text(material.name),
+                        subtitle: Text(
+                          'Stok: ${material.stock}/${material.minStock} ${material.unit}',
+                        ),
+                        trailing: const Text(
+                          'Restok',
+                          style: TextStyle(color: Colors.orange),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 16),
                   ],
-                  
+
                   // Expiring materials
                   if (expiringSoonMaterials.isNotEmpty) ...[
                     const Text(
                       'Segera Kadaluarsa',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
                     ),
                     const SizedBox(height: 8),
-                    ...expiringSoonMaterials.map((material) => ListTile(
-                      leading: const Icon(Icons.schedule, color: Colors.blue),
-                      title: Text(material.name),
-                      subtitle: Text('Kadaluarsa: ${_formatDate(material.expiryDate)}'),
-                      trailing: Text(
-                        '${material.expiryDate.difference(DateTime.now()).inDays} hari',
-                        style: const TextStyle(color: Colors.blue),
+                    ...expiringSoonMaterials.map(
+                      (material) => ListTile(
+                        leading: const Icon(Icons.schedule, color: Colors.blue),
+                        title: Text(material.name),
+                        subtitle: Text(
+                          'Kadaluarsa: ${_formatDate(material.expiryDate)}',
+                        ),
+                        trailing: Text(
+                          '${material.expiryDate.difference(DateTime.now()).inDays} hari',
+                          style: const TextStyle(color: Colors.blue),
+                        ),
                       ),
-                    )),
+                    ),
                   ],
-                  
+
                   // General notifications
                   const ListTile(
                     leading: Icon(Icons.celebration, color: Colors.green),
                     title: Text('Target Penjualan Tercapai'),
-                    subtitle: Text('Penjualan hari ini mencapai target yang ditetapkan'),
+                    subtitle: Text(
+                      'Penjualan hari ini mencapai target yang ditetapkan',
+                    ),
                     trailing: Text('Hari ini'),
                   ),
                   const ListTile(
@@ -2685,12 +3004,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               child: Icon(Icons.person, color: Colors.white, size: 40),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Admin Warkop',
+            Text(
+              _authService.getCurrentUserName() ?? 'Pengguna',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const Text(
-              'admin@warkop.com',
+            Text(
+              _authService.getCurrentUserEmail() ?? 'Tidak ada email',
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 20),
@@ -2777,30 +3096,60 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
                 children: [
-                  _buildQuickModalAction('Tambah\nProduk', Icons.add_box, const Color(0xFF2E8B57), () {
-                    Navigator.pop(context);
-                    _showProductForm(context);
-                  }),
-                  _buildQuickModalAction('Catat\nPenjualan', Icons.point_of_sale, const Color(0xFF4682B4), () {
-                    Navigator.pop(context);
-                    _showSaleForm(context);
-                  }),
-                  _buildQuickModalAction('Tambah\nBahan Baku', Icons.inventory, const Color(0xFFFF8C00), () {
-                    Navigator.pop(context);
-                    _showRawMaterialForm(context);
-                  }),
-                  _buildQuickModalAction('Lihat\nStok Produk', Icons.restaurant_menu, const Color(0xFF9370DB), () {
-                    Navigator.pop(context);
-                    _navigateToProductStock(context);
-                  }),
-                  _buildQuickModalAction('Lihat\nBahan Baku', Icons.inventory_2, const Color(0xFFDC143C), () {
-                    Navigator.pop(context);
-                    _navigateToRawMaterials(context);
-                  }),
-                  _buildQuickModalAction('Lihat\nPenjualan', Icons.receipt_long, const Color(0xFF708090), () {
-                    Navigator.pop(context);
-                    _navigateToSalesRecord(context);
-                  }),
+                  _buildQuickModalAction(
+                    'Tambah\nProduk',
+                    Icons.add_box,
+                    const Color(0xFF2E8B57),
+                    () {
+                      Navigator.pop(context);
+                      _showProductForm(context);
+                    },
+                  ),
+                  _buildQuickModalAction(
+                    'Catat\nPenjualan',
+                    Icons.point_of_sale,
+                    const Color(0xFF4682B4),
+                    () {
+                      Navigator.pop(context);
+                      _showSaleForm(context);
+                    },
+                  ),
+                  _buildQuickModalAction(
+                    'Tambah\nBahan Baku',
+                    Icons.inventory,
+                    const Color(0xFFFF8C00),
+                    () {
+                      Navigator.pop(context);
+                      _showRawMaterialForm(context);
+                    },
+                  ),
+                  _buildQuickModalAction(
+                    'Lihat\nStok Produk',
+                    Icons.restaurant_menu,
+                    const Color(0xFF9370DB),
+                    () {
+                      Navigator.pop(context);
+                      _navigateToProductStock(context);
+                    },
+                  ),
+                  _buildQuickModalAction(
+                    'Lihat\nBahan Baku',
+                    Icons.inventory_2,
+                    const Color(0xFFDC143C),
+                    () {
+                      Navigator.pop(context);
+                      _navigateToRawMaterials(context);
+                    },
+                  ),
+                  _buildQuickModalAction(
+                    'Lihat\nPenjualan',
+                    Icons.receipt_long,
+                    const Color(0xFF708090),
+                    () {
+                      Navigator.pop(context);
+                      _navigateToSalesRecord(context);
+                    },
+                  ),
                 ],
               ),
             ),
@@ -2811,7 +3160,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildQuickModalAction(String title, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildQuickModalAction(
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -2854,22 +3208,53 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             itemCount: 15,
             itemBuilder: (context, index) {
               final activities = [
-                {'title': 'Produk baru ditambahkan', 'icon': Icons.add_circle, 'color': const Color(0xFF2E8B57)},
-                {'title': 'Penjualan berhasil dicatat', 'icon': Icons.shopping_cart, 'color': const Color(0xFF4682B4)},
-                {'title': 'Stok bahan baku diperbarui', 'icon': Icons.inventory, 'color': const Color(0xFFFF8C00)},
-                {'title': 'Laporan harian dibuat', 'icon': Icons.description, 'color': const Color(0xFF9370DB)},
-                {'title': 'Backup data berhasil', 'icon': Icons.backup, 'color': const Color(0xFF8B4513)},
+                {
+                  'title': 'Produk baru ditambahkan',
+                  'icon': Icons.add_circle,
+                  'color': const Color(0xFF2E8B57),
+                },
+                {
+                  'title': 'Penjualan berhasil dicatat',
+                  'icon': Icons.shopping_cart,
+                  'color': const Color(0xFF4682B4),
+                },
+                {
+                  'title': 'Stok bahan baku diperbarui',
+                  'icon': Icons.inventory,
+                  'color': const Color(0xFFFF8C00),
+                },
+                {
+                  'title': 'Laporan harian dibuat',
+                  'icon': Icons.description,
+                  'color': const Color(0xFF9370DB),
+                },
+                {
+                  'title': 'Backup data berhasil',
+                  'icon': Icons.backup,
+                  'color': const Color(0xFF8B4513),
+                },
               ];
-              
+
               final activity = activities[index % activities.length];
-              
+
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: (activity['color'] as Color).withOpacity(0.1),
-                  child: Icon(activity['icon'] as IconData, color: activity['color'] as Color),
+                  backgroundColor: (activity['color'] as Color).withOpacity(
+                    0.1,
+                  ),
+                  child: Icon(
+                    activity['icon'] as IconData,
+                    color: activity['color'] as Color,
+                  ),
                 ),
                 title: Text(activity['title'] as String),
-                subtitle: Text('${index + 1} ${index == 0 ? 'menit' : index < 60 ? 'menit' : 'jam'} yang lalu'),
+                subtitle: Text(
+                  '${index + 1} ${index == 0
+                      ? 'menit'
+                      : index < 60
+                      ? 'menit'
+                      : 'jam'} yang lalu',
+                ),
                 trailing: Icon(Icons.chevron_right, color: Colors.grey[400]),
               );
             },
@@ -2977,8 +3362,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               Navigator.pop(context);
               _performBackup();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8B4513)),
-            child: const Text('Mulai Backup', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF8B4513),
+            ),
+            child: const Text(
+              'Mulai Backup',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -3000,7 +3390,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             Text('$feature - Coming Soon'),
           ],
         ),
-        content: Text('Fitur $feature sedang dalam pengembangan dan akan segera tersedia dalam update mendatang.'),
+        content: Text(
+          'Fitur $feature sedang dalam pengembangan dan akan segera tersedia dalam update mendatang.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -3026,14 +3418,20 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Panduan Penggunaan:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Panduan Penggunaan:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 8),
             Text('• Gunakan menu utama untuk mengakses fitur'),
             Text('• Tekan tombol + untuk menambah data baru'),
             Text('• Tekan menu ⋮ pada card untuk edit/hapus'),
             Text('• Cek notifikasi untuk peringatan stok'),
             SizedBox(height: 16),
-            Text('Kontak Support:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              'Kontak Support:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 8),
             Text('Email: support@warkop.com'),
             Text('Telepon: 0812-3456-7890'),
@@ -3064,7 +3462,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Warkop Manager', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              'Warkop Manager',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             SizedBox(height: 8),
             Text('Versi 1.0.0'),
             SizedBox(height: 16),
@@ -3075,7 +3476,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             Text('• Laporan dan analisis'),
             Text('• Notifikasi stok rendah'),
             SizedBox(height: 16),
-            Text('Dikembangkan dengan Flutter', style: TextStyle(fontStyle: FontStyle.italic)),
+            Text(
+              'Dikembangkan dengan Flutter',
+              style: TextStyle(fontStyle: FontStyle.italic),
+            ),
           ],
         ),
         actions: [
@@ -3107,8 +3511,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ),
           ElevatedButton(
             onPressed: () {
+              _authService.signOut();
               Navigator.pop(context);
-              _showSuccessSnackBar('Berhasil keluar dari aplikasi');
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+                (Route<dynamic> route) => false,
+              );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Keluar', style: TextStyle(color: Colors.white)),
