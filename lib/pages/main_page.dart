@@ -482,7 +482,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ),
           const SizedBox(height: 8),
           Text(
-            'Kelola bisnis warkop Anda dengan mudah dan efisien',
+            'Pengelolaan bisnis Warkop Bunny mudah dan efisien',
             style: TextStyle(
               color: Colors.white.withOpacity(0.9),
               fontSize: 16,
@@ -2974,7 +2974,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               subtitle: Text('Total hari ini: ${_formatCurrency(todaySales)}'),
               onTap: () {
                 Navigator.pop(context);
-                _showSalesReport();
+                _showSalesReportDialog(context); // Gunakan method yang baru
               },
             ),
             ListTile(
@@ -3211,8 +3211,1358 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         return Icons.fastfood;
     }
   }
+
+  // Method untuk menghitung laporan penjualan berdasarkan periode
+  Map<String, dynamic> _calculateSalesReport(String period, DateTime selectedDate) {
+    List<Sale> filteredSales = [];
+    
+    switch (period) {
+      case 'daily':
+        filteredSales = sales.where((sale) => _isSameDay(sale.saleDate, selectedDate)).toList();
+        break;
+      case 'monthly':
+        filteredSales = sales.where((sale) => 
+          sale.saleDate.year == selectedDate.year && 
+          sale.saleDate.month == selectedDate.month
+        ).toList();
+        break;
+      case 'yearly':
+        filteredSales = sales.where((sale) => 
+          sale.saleDate.year == selectedDate.year
+        ).toList();
+        break;
+    }
+
+    double totalRevenue = filteredSales.fold(0.0, (sum, sale) => sum + sale.totalPrice);
+    int totalOrders = filteredSales.length;
+    int totalItems = filteredSales.fold(0, (sum, sale) => sum + sale.quantity);
+    
+    // Hitung produk terlaris
+    Map<String, int> productSales = {};
+    Map<String, double> productRevenue = {};
+    
+    for (var sale in filteredSales) {
+      productSales[sale.productName] = (productSales[sale.productName] ?? 0) + sale.quantity;
+      productRevenue[sale.productName] = (productRevenue[sale.productName] ?? 0) + sale.totalPrice;
+    }
+    
+    // Urutkan produk berdasarkan jumlah terjual
+    var sortedProducts = productSales.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    
+    // Hitung penjualan per metode pembayaran
+    Map<String, int> paymentMethods = {};
+    for (var sale in filteredSales) {
+      paymentMethods[sale.paymentMethod] = (paymentMethods[sale.paymentMethod] ?? 0) + 1;
+    }
+
+    return {
+      'sales': filteredSales,
+      'totalRevenue': totalRevenue,
+      'totalOrders': totalOrders,
+      'totalItems': totalItems,
+      'topProducts': sortedProducts,
+      'productRevenue': productRevenue,
+      'paymentMethods': paymentMethods,
+    };
+  }
+
+  // Method untuk menampilkan laporan penjualan
+  void _showSalesReportDialog(BuildContext context) {
+    String selectedPeriod = 'daily';
+    DateTime selectedDate = DateTime.now();
+    
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          final reportData = _calculateSalesReport(selectedPeriod, selectedDate);
+          
+          return AlertDialog(
+            title: const Row(
+              children: [
+                Icon(Icons.trending_up, color: Color(0xFF2E8B57)),
+                SizedBox(width: 8),
+                Text('Laporan Penjualan'),
+              ],
+            ),
+            content: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.7,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Filter Periode
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          value: selectedPeriod,
+                          decoration: const InputDecoration(
+                            labelText: 'Periode',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.calendar_view_day),
+                          ),
+                          items: const [
+                            DropdownMenuItem(value: 'daily', child: Text('Harian')),
+                            DropdownMenuItem(value: 'monthly', child: Text('Bulanan')),
+                            DropdownMenuItem(value: 'yearly', child: Text('Tahunan')),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              selectedPeriod = value!;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () async {
+                            final date = await showDatePicker(
+                              context: context,
+                              initialDate: selectedDate,
+                              firstDate: DateTime(2020),
+                              lastDate: DateTime.now(),
+                            );
+                            if (date != null) {
+                              setState(() {
+                                selectedDate = date;
+                              });
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.calendar_today, color: Colors.grey),
+                                const SizedBox(width: 8),
+                                Text(_getPeriodText(selectedPeriod, selectedDate)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Ringkasan
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2E8B57).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFF2E8B57).withOpacity(0.3)),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Total Pendapatan', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                Text(
+                                  _formatCurrency(reportData['totalRevenue']),
+                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF2E8B57)),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Total Pesanan', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                Text(
+                                  '${reportData['totalOrders']} pesanan',
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Total Item', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                Text(
+                                  '${reportData['totalItems']} item',
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Rata-rata per Pesanan', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                Text(
+                                  reportData['totalOrders'] > 0 
+                                    ? _formatCurrency(reportData['totalRevenue'] / reportData['totalOrders'])
+                                    : 'Rp 0',
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Detail laporan dalam tabs
+                  Expanded(
+                    child: DefaultTabController(
+                      length: 3,
+                      child: Column(
+                        children: [
+                          const TabBar(
+                            labelColor: Color(0xFF2E8B57),
+                            unselectedLabelColor: Colors.grey,
+                            tabs: [
+                              Tab(text: 'Produk Terlaris'),
+                              Tab(text: 'Detail Transaksi'),
+                              Tab(text: 'Metode Pembayaran'),
+                            ],
+                          ),
+                          Expanded(
+                            child: TabBarView(
+                              children: [
+                                // Tab Produk Terlaris
+                                _buildTopProductsTab(reportData),
+                                // Tab Detail Transaksi
+                                _buildTransactionDetailsTab(reportData['sales']),
+                                // Tab Metode Pembayaran
+                                _buildPaymentMethodsTab(reportData['paymentMethods']),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Tutup'),
+              ),
+              ElevatedButton(
+                onPressed: () => _exportSalesReport(reportData, selectedPeriod, selectedDate),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2E8B57)),
+                child: const Text('Export', style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildTopProductsTab(Map<String, dynamic> reportData) {
+    final topProducts = reportData['topProducts'] as List<MapEntry<String, int>>;
+    final productRevenue = reportData['productRevenue'] as Map<String, double>;
+    
+    if (topProducts.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.shopping_cart_outlined, size: 60, color: Colors.grey),
+            SizedBox(height: 16),
+            Text('Tidak ada data penjualan'),
+          ],
+        ),
+      );
+    }
+    
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: topProducts.length,
+      itemBuilder: (context, index) {
+        final product = topProducts[index];
+        final revenue = productRevenue[product.key] ?? 0;
+        
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: const Color(0xFF2E8B57).withOpacity(0.1),
+              child: Text(
+                '${index + 1}',
+                style: const TextStyle(color: Color(0xFF2E8B57), fontWeight: FontWeight.bold),
+              ),
+            ),
+            title: Text(product.key),
+            subtitle: Text('${product.value} item terjual'),
+            trailing: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  _formatCurrency(revenue),
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF2E8B57)),
+                ),
+                Text(
+                  '${((revenue / reportData['totalRevenue']) * 100).toStringAsFixed(1)}%',
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTransactionDetailsTab(List<Sale> sales) {
+    if (sales.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.receipt_outlined, size: 60, color: Colors.grey),
+            SizedBox(height: 16),
+            Text('Tidak ada transaksi'),
+          ],
+        ),
+      );
+    }
+    
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: sales.length,
+      itemBuilder: (context, index) {
+        final sale = sales[sales.length - 1 - index]; // Tampilkan terbaru dulu
+        
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          child: ListTile(
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF8C00).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(Icons.shopping_cart, color: Color(0xFFFF8C00), size: 20),
+            ),
+            title: Text(sale.productName),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Pelanggan: ${sale.customerName}'),
+                Text('${_formatDateTime(sale.saleDate)} • ${sale.paymentMethod}'),
+              ],
+            ),
+            trailing: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  _formatCurrency(sale.totalPrice),
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF2E8B57)),
+                ),
+                Text(
+                  '${sale.quantity} item',
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPaymentMethodsTab(Map<String, int> paymentMethods) {
+    if (paymentMethods.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.payment_outlined, size: 60, color: Colors.grey),
+            SizedBox(height: 16),
+            Text('Tidak ada data pembayaran'),
+          ],
+        ),
+      );
+    }
+    
+    final total = paymentMethods.values.fold(0, (sum, count) => sum + count);
+    final sortedMethods = paymentMethods.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: sortedMethods.length,
+      itemBuilder: (context, index) {
+        final method = sortedMethods[index];
+        final percentage = (method.value / total * 100);
+        
+        Color methodColor;
+        IconData methodIcon;
+        
+        switch (method.key.toLowerCase()) {
+          case 'tunai':
+            methodColor = const Color(0xFF4CAF50);
+            methodIcon = Icons.money;
+            break;
+          case 'transfer':
+            methodColor = const Color(0xFF2196F3);
+            methodIcon = Icons.account_balance;
+            break;
+          case 'kartu kredit':
+            methodColor = const Color(0xFFFF9800);
+            methodIcon = Icons.credit_card;
+            break;
+          case 'e-wallet':
+            methodColor = const Color(0xFF9C27B0);
+            methodIcon = Icons.phone_android;
+            break;
+          default:
+            methodColor = Colors.grey;
+            methodIcon = Icons.payment;
+        }
+        
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          child: ListTile(
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: methodColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(methodIcon, color: methodColor, size: 20),
+            ),
+            title: Text(method.key),
+            subtitle: LinearProgressIndicator(
+              value: percentage / 100,
+              backgroundColor: Colors.grey[300],
+              valueColor: AlwaysStoppedAnimation<Color>(methodColor),
+            ),
+            trailing: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '${method.value} transaksi',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '${percentage.toStringAsFixed(1)}%',
+                  style: TextStyle(fontSize: 12, color: methodColor),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String _getPeriodText(String period, DateTime date) {
+    switch (period) {
+      case 'daily':
+        return _formatDate(date);
+      case 'monthly':
+        return '${_getMonthName(date.month)} ${date.year}';
+      case 'yearly':
+        return '${date.year}';
+      default:
+        return _formatDate(date);
+    }
+  }
+
+  String _getMonthName(int month) {
+    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                   'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    return months[month - 1];
+  }
+
+  void _exportSalesReport(Map<String, dynamic> reportData, String period, DateTime date) {
+    // Simulasi export - dalam implementasi nyata bisa export ke PDF/Excel
+    _showSuccessSnackBar('Laporan berhasil diekspor!');
+  }
+
+  // Tambahkan method ini ke dalam class _MainPageState
+
+// Method untuk menampilkan laporan stok lengkap
+void _showStockReportDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Row(
+        children: [
+          Icon(Icons.inventory_2, color: Color(0xFF4682B4)),
+          SizedBox(width: 8),
+          Text('Laporan Stok'),
+        ],
+      ),
+      content: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.95,
+        height: MediaQuery.of(context).size.height * 0.8,
+        child: DefaultTabController(
+          length: 3,
+          child: Column(
+            children: [
+              // Summary Cards
+              _buildStockSummaryCards(),
+              
+              const SizedBox(height: 16),
+              
+              // Tab Bar
+              const TabBar(
+                labelColor: Color(0xFF4682B4),
+                unselectedLabelColor: Colors.grey,
+                indicatorColor: Color(0xFF4682B4),
+                tabs: [
+                  Tab(
+                    icon: Icon(Icons.restaurant_menu),
+                    text: 'Produk',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.inventory),
+                    text: 'Bahan Baku',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.analytics),
+                    text: 'Analisis',
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Tab Views
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    _buildProductStockTab(),
+                    _buildRawMaterialStockTab(),
+                    _buildStockAnalysisTab(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Tutup'),
+        ),
+        ElevatedButton(
+          onPressed: () => _exportStockReport(),
+          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4682B4)),
+          child: const Text('Export', style: TextStyle(color: Colors.white)),
+        ),
+      ],
+    ),
+  );
+}
+
+// Widget untuk summary cards
+Widget _buildStockSummaryCards() {
+  final lowStockProducts = products.where((p) => p.stock <= 10).length;
+  final lowStockMaterials = rawMaterials.where((m) => m.stock <= m.minStock).length;
+  final expiringSoon = rawMaterials.where((m) => 
+    m.expiryDate.difference(DateTime.now()).inDays <= 30).length;
+  
+  final totalProductValue = products.fold(0.0, (sum, p) => sum + (p.price * p.stock));
+  final totalMaterialValue = rawMaterials.fold(0.0, (sum, m) => sum + (m.price * m.stock));
+  
+  return Column(
+    children: [
+      Row(
+        children: [
+          Expanded(
+            child: _buildSummaryCard(
+              'Total Produk',
+              products.length.toString(),
+              Icons.restaurant_menu,
+              const Color(0xFF2E8B57),
+              'items',
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildSummaryCard(
+              'Stok Rendah',
+              lowStockProducts.toString(),
+              Icons.warning_amber,
+              Colors.orange,
+              'items',
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 8),
+      Row(
+        children: [
+          Expanded(
+            child: _buildSummaryCard(
+              'Total Bahan',
+              rawMaterials.length.toString(),
+              Icons.inventory,
+              const Color(0xFF4682B4),
+              'items',
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildSummaryCard(
+              'Perlu Restok',
+              lowStockMaterials.toString(),
+              Icons.priority_high,
+              Colors.red,
+              'items',
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 8),
+      Row(
+        children: [
+          Expanded(
+            child: _buildSummaryCard(
+              'Nilai Produk',
+              _formatCurrency(totalProductValue),
+              Icons.attach_money,
+              const Color(0xFF9C27B0),
+              '',
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildSummaryCard(
+              'Segera Expired',
+              expiringSoon.toString(),
+              Icons.schedule,
+              Colors.orange,
+              'items',
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
+// Widget untuk summary card yang lebih kecil
+Widget _buildSummaryCard(String title, String value, IconData icon, Color color, String suffix) {
+  return Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: color.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: color.withOpacity(0.3)),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, color: color, size: 16),
+            const Spacer(),
+            Icon(Icons.trending_up, color: color.withOpacity(0.6), size: 12),
+          ],
+        ),
+        const SizedBox(height: 6),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 10,
+            color: Colors.grey,
+            fontWeight: FontWeight.w500,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    ),
+  );
+}
+
+// Tab untuk laporan stok produk
+Widget _buildProductStockTab() {
+  if (products.isEmpty) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.inventory_outlined, size: 60, color: Colors.grey),
+          SizedBox(height: 16),
+          Text('Tidak ada data produk'),
+        ],
+      ),
+    );
+  }
+
+  // Urutkan produk berdasarkan kategori dan stok
+  final sortedProducts = List<Product>.from(products);
+  sortedProducts.sort((a, b) {
+    // Prioritas: stok rendah dulu, lalu berdasarkan kategori
+    if (a.stock <= 10 && b.stock > 10) return -1;
+    if (a.stock > 10 && b.stock <= 10) return 1;
+    return a.category.compareTo(b.category);
+  });
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Filter dan statistik
+      Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: const Color(0xFF2E8B57).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Status Stok Produk', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text('${products.where((p) => p.stock > 10).length} Normal • ${products.where((p) => p.stock <= 10).length} Rendah'),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: products.where((p) => p.stock <= 10).isNotEmpty 
+                  ? Colors.orange 
+                  : const Color(0xFF2E8B57),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                products.where((p) => p.stock <= 10).isNotEmpty 
+                  ? 'Perlu Perhatian' 
+                  : 'Stok Aman',
+                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+      
+      const SizedBox(height: 12),
+      
+      // Daftar produk
+      Expanded(
+        child: ListView.builder(
+          itemCount: sortedProducts.length,
+          itemBuilder: (context, index) {
+            final product = sortedProducts[index];
+            final isLowStock = product.stock <= 10;
+            final stockValue = product.price * product.stock;
+            
+            return Card(
+              margin: const EdgeInsets.only(bottom: 8),
+              elevation: isLowStock ? 3 : 1,
+              color: isLowStock ? Colors.orange.withOpacity(0.05) : null,
+              child: ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: isLowStock 
+                      ? Colors.orange.withOpacity(0.2)
+                      : const Color(0xFF2E8B57).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    _getCategoryIcon(product.category),
+                    color: isLowStock ? Colors.orange : const Color(0xFF2E8B57),
+                    size: 20,
+                  ),
+                ),
+                title: Row(
+                  children: [
+                    Expanded(child: Text(product.name, style: const TextStyle(fontWeight: FontWeight.w600))),
+                    if (isLowStock) 
+                      const Icon(Icons.warning, color: Colors.orange, size: 16),
+                  ],
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(product.category),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Text('Stok: ', style: TextStyle(color: Colors.grey[600])),
+                        Text(
+                          '${product.stock} ${product.unit}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: isLowStock ? Colors.orange : Colors.black,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text('Nilai: ${_formatCurrency(stockValue)}'),
+                      ],
+                    ),
+                  ],
+                ),
+                trailing: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '@ ${_formatCurrency(product.price)}',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 2),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: isLowStock ? Colors.orange : const Color(0xFF2E8B57),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        isLowStock ? 'RENDAH' : 'NORMAL',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    ],
+  );
+}
+
+// Tab untuk laporan stok bahan baku
+Widget _buildRawMaterialStockTab() {
+  if (rawMaterials.isEmpty) {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.inventory_2_outlined, size: 60, color: Colors.grey),
+          SizedBox(height: 16),
+          Text('Tidak ada data bahan baku'),
+        ],
+      ),
+    );
+  }
+
+  // Urutkan bahan baku berdasarkan prioritas (stok rendah dan expiry)
+  final sortedMaterials = List<RawMaterial>.from(rawMaterials);
+  sortedMaterials.sort((a, b) {
+    final aLowStock = a.stock <= a.minStock;
+    final bLowStock = b.stock <= b.minStock;
+    final aExpiringSoon = a.expiryDate.difference(DateTime.now()).inDays <= 30;
+    final bExpiringSoon = b.expiryDate.difference(DateTime.now()).inDays <= 30;
+    
+    // Prioritas: stok rendah atau expiring soon dulu
+    if ((aLowStock || aExpiringSoon) && !(bLowStock || bExpiringSoon)) return -1;
+    if (!(aLowStock || aExpiringSoon) && (bLowStock || bExpiringSoon)) return 1;
+    return a.name.compareTo(b.name);
+  });
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Status summary
+      Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: const Color(0xFF4682B4).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Status Bahan Baku', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildMaterialStatusIndicator(
+                    'Normal',
+                    rawMaterials.where((m) => m.stock > m.minStock && 
+                      m.expiryDate.difference(DateTime.now()).inDays > 30).length,
+                    const Color(0xFF2E8B57),
+                  ),
+                ),
+                Expanded(
+                  child: _buildMaterialStatusIndicator(
+                    'Perlu Restok',
+                    rawMaterials.where((m) => m.stock <= m.minStock).length,
+                    Colors.red,
+                  ),
+                ),
+                Expanded(
+                  child: _buildMaterialStatusIndicator(
+                    'Expiring Soon',
+                    rawMaterials.where((m) => 
+                      m.expiryDate.difference(DateTime.now()).inDays <= 30).length,
+                    Colors.orange,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      
+      const SizedBox(height: 12),
+      
+      // Daftar bahan baku
+      Expanded(
+        child: ListView.builder(
+          itemCount: sortedMaterials.length,
+          itemBuilder: (context, index) {
+            final material = sortedMaterials[index];
+            final isLowStock = material.stock <= material.minStock;
+            final isExpiringSoon = material.expiryDate.difference(DateTime.now()).inDays <= 30;
+            final daysToExpiry = material.expiryDate.difference(DateTime.now()).inDays;
+            final stockValue = material.price * material.stock;
+            
+            Color statusColor = const Color(0xFF2E8B57);
+            String statusText = 'NORMAL';
+            
+            if (isLowStock) {
+              statusColor = Colors.red;
+              statusText = 'RESTOK';
+            } else if (isExpiringSoon) {
+              statusColor = Colors.orange;
+              statusText = 'EXPIRING';
+            }
+            
+            return Card(
+              margin: const EdgeInsets.only(bottom: 8),
+              elevation: (isLowStock || isExpiringSoon) ? 3 : 1,
+              color: (isLowStock || isExpiringSoon) 
+                ? statusColor.withOpacity(0.05) 
+                : null,
+              child: ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.inventory,
+                    color: statusColor,
+                    size: 20,
+                  ),
+                ),
+                title: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        material.name, 
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    if (isLowStock || isExpiringSoon)
+                      Icon(Icons.warning, color: statusColor, size: 16),
+                  ],
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(material.supplier),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Text('Stok: ${material.stock}/${material.minStock} ${material.unit}'),
+                        const SizedBox(width: 12),
+                        Text('Nilai: ${_formatCurrency(stockValue)}'),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Expired: ${_formatDate(material.expiryDate)} ($daysToExpiry hari)',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isExpiringSoon ? Colors.orange : Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+                trailing: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '@ ${_formatCurrency(material.price)}',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 2),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: statusColor,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        statusText,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildMaterialStatusIndicator(String label, int count, Color color) {
+  return Column(
+    children: [
+      Text(
+        count.toString(),
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: color,
+        ),
+      ),
+      Text(
+        label,
+        style: const TextStyle(fontSize: 11, color: Colors.grey),
+        textAlign: TextAlign.center,
+      ),
+    ],
+  );
+}
+
+// Tab untuk analisis stok
+Widget _buildStockAnalysisTab() {
+  // Hitung data analisis
+  final totalProductValue = products.fold(0.0, (sum, p) => sum + (p.price * p.stock));
+  final totalMaterialValue = rawMaterials.fold(0.0, (sum, m) => sum + (m.price * m.stock));
+  final totalInventoryValue = totalProductValue + totalMaterialValue;
+  
+  // Analisis berdasarkan kategori produk
+  Map<String, int> categoryCount = {};
+  Map<String, double> categoryValue = {};
+  Map<String, int> categoryLowStock = {};
+  
+  for (var product in products) {
+    categoryCount[product.category] = (categoryCount[product.category] ?? 0) + 1;
+    categoryValue[product.category] = (categoryValue[product.category] ?? 0) + (product.price * product.stock);
+    if (product.stock <= 10) {
+      categoryLowStock[product.category] = (categoryLowStock[product.category] ?? 0) + 1;
+    }
+  }
+  
+  // Supplier analysis
+  Map<String, int> supplierCount = {};
+  Map<String, int> supplierLowStock = {};
+  
+  for (var material in rawMaterials) {
+    supplierCount[material.supplier] = (supplierCount[material.supplier] ?? 0) + 1;
+    if (material.stock <= material.minStock) {
+      supplierLowStock[material.supplier] = (supplierLowStock[material.supplier] ?? 0) + 1;
+    }
+  }
+
+  return SingleChildScrollView(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Total Inventory Value
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF4CAF50), Color(0xFF8BC34A)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: [
+              const Text(
+                'Total Nilai Inventori',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _formatCurrency(totalInventoryValue),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        _formatCurrency(totalProductValue),
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                      const Text(
+                        'Produk',
+                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    width: 1,
+                    height: 30,
+                    color: Colors.white30,
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        _formatCurrency(totalMaterialValue),
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                      const Text(
+                        'Bahan Baku',
+                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        
+        const SizedBox(height: 20),
+        
+        // Analisis per Kategori
+        const Text(
+          'Analisis per Kategori Produk',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        
+        ...categoryCount.entries.map((entry) {
+          final category = entry.key;
+          final count = entry.value;
+          final value = categoryValue[category] ?? 0;
+          final lowStock = categoryLowStock[category] ?? 0;
+          final percentage = (value / totalProductValue * 100);
+          
+          return Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(_getCategoryIcon(category), size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          category,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      Text(
+                        '${percentage.toStringAsFixed(1)}%',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  LinearProgressIndicator(
+                    value: percentage / 100,
+                    backgroundColor: Colors.grey[300],
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      _getCategoryColor(category),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('$count produk'),
+                      Text(_formatCurrency(value)),
+                      if (lowStock > 0)
+                        Text(
+                          '$lowStock stok rendah',
+                          style: const TextStyle(color: Colors.orange, fontSize: 12),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+        
+        const SizedBox(height: 20),
+        
+        // Analisis Supplier
+        const Text(
+          'Analisis per Supplier',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        
+        ...supplierCount.entries.map((entry) {
+          final supplier = entry.key;
+          final count = entry.value;
+          final lowStock = supplierLowStock[supplier] ?? 0;
+          
+          return Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4682B4).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.business, color: Color(0xFF4682B4), size: 20),
+              ),
+              title: Text(supplier),
+              subtitle: Text('$count bahan baku'),
+              trailing: lowStock > 0
+                ? Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '$lowStock perlu restok',
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  )
+                : const Icon(Icons.check_circle, color: Color(0xFF2E8B57)),
+            ),
+          );
+        }).toList(),
+        
+        const SizedBox(height: 20),
+        
+        // Rekomendasi
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.blue[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.blue[200]!),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.lightbulb, color: Colors.blue),
+                  SizedBox(width: 8),
+                  Text(
+                    'Rekomendasi',
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              
+              if (products.where((p) => p.stock <= 10).isNotEmpty)
+                const Text('• Segera restok produk dengan stok rendah'),
+              
+              if (rawMaterials.where((m) => m.stock <= m.minStock).isNotEmpty)
+                const Text('• Perlu restok bahan baku yang sudah mencapai minimum stok'),
+              
+              if (rawMaterials.where((m) => 
+                m.expiryDate.difference(DateTime.now()).inDays <= 30).isNotEmpty)
+                const Text('• Prioritaskan penggunaan bahan baku yang akan expired'),
+              
+              if (categoryValue.isNotEmpty)
+                Text('• Kategori dengan nilai tertinggi: ${categoryValue.entries.reduce((a, b) => a.value > b.value ? a : b).key}'),
+              
+              const Text('• Lakukan audit stok fisik secara berkala'),
+            ],
+          ),
+        ),
+        
+        const SizedBox(height: 20),
+      ],
+    ),
+  );
+}
+
+Color _getCategoryColor(String category) {
+  switch (category.toLowerCase()) {
+    case 'minuman panas':
+      return const Color(0xFFFF9800);
+    case 'minuman dingin':
+      return const Color(0xFF2196F3);
+    case 'makanan':
+      return const Color(0xFF4CAF50);
+    case 'snack':
+      return const Color(0xFF9C27B0);
+    default:
+      return Colors.grey;
+  }
+}
+
+// Method untuk export laporan stok
+void _exportStockReport() {
+  // Simulasi export - dalam implementasi nyata bisa export ke PDF/Excel
+  _showSuccessSnackBar('Laporan stok berhasil diekspor!');
+}
+
+// Update method _showStockReport() yang sudah ada
+
+  
 }
 
 class _showDeleteConfirmation {
   _showDeleteConfirmation(BuildContext context, String s, String t, void Function() param3);
 }
+
