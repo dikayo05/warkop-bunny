@@ -468,7 +468,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           Row(
             children: [
               const Text(
-                'Selamat Datang Kembali!',
+                'Selamat Datang!',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 22,
@@ -476,21 +476,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 ),
               ),
               const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Text(
-                  'ONLINE',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+             
             ],
           ),
           const SizedBox(height: 8),
@@ -2320,12 +2306,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                 hint: const Text('Pilih Kategori'),
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              onPressed: () => _showAddCategoryDialog(context),
-                              icon: const Icon(Icons.add_circle, color: Color(0xFF2E8B57)),
-                              tooltip: 'Tambah Kategori Baru',
-                            ),
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -3302,22 +3282,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             ),
             const SizedBox(height: 20),
             ListTile(
-              leading: const Icon(Icons.person_outline),
-              title: const Text('Profil Saya'),
-              onTap: () {
-                Navigator.pop(context);
-                _showComingSoonDialog(context, 'Profil');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings_outlined),
-              title: const Text('Pengaturan'),
-              onTap: () {
-                Navigator.pop(context);
-                _showComingSoonDialog(context, 'Pengaturan');
-              },
-            ),
-            ListTile(
               leading: const Icon(Icons.help_outline),
               title: const Text('Bantuan'),
               onTap: () {
@@ -4203,10 +4167,7 @@ Future<void> _shareBackupFile(String filePath) async {
             Text('• Tekan menu ⋮ pada card untuk edit/hapus'),
             Text('• Cek notifikasi untuk peringatan stok'),
             SizedBox(height: 16),
-            Text('Kontak Support:', style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            Text('Email: support@warkop.com'),
-            Text('Telepon: 0812-3456-7890'),
+            
           ],
         ),
         actions: [
@@ -4390,7 +4351,6 @@ Future<void> _shareBackupFile(String filePath) async {
                           decoration: const InputDecoration(
                             labelText: 'Periode',
                             border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.calendar_view_day),
                           ),
                           items: const [
                             DropdownMenuItem(value: 'daily', child: Text('Harian')),
@@ -4428,8 +4388,8 @@ Future<void> _shareBackupFile(String filePath) async {
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.calendar_today, color: Colors.grey),
-                                const SizedBox(width: 8),
+                                // const Icon(Icons.calendar_today, color: Colors.grey),
+                                const SizedBox(width: 8,),
                                 Text(_getPeriodText(selectedPeriod, selectedDate)),
                               ],
                             ),
