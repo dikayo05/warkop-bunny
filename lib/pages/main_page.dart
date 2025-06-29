@@ -4743,26 +4743,6 @@ Future<void> _shareBackupFile(String filePath) async {
   }
 
   
-
-// Method untuk menampilkan laporan stok lengkap
-
-// Widget untuk summary cards
-
-// Widget untuk summary card yang lebih kecil
-
-// Tab untuk laporan stok produk
-
-// Tab untuk laporan stok bahan baku
-
-
-// Tab untuk analisis stok
-
-
-// Method untuk export laporan stok
-
-// Update method _showStockReport() yang sudah ada
-
-  
 }
 
 class _showDeleteConfirmation {
