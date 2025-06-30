@@ -28,7 +28,6 @@ class MyApp extends StatelessWidget {
       title: 'Warkop Bunny',
       theme: lightMode,
       home: AuthGate(),
-      // home: LoginPage(),
     );
   }
 }

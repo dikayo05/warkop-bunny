@@ -4,88 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:warkop_bunny/auth/auth_service.dart';
+import 'package:warkop_bunny/models/product_model.dart';
+import 'package:warkop_bunny/models/raw_material_model.dart';
+import 'package:warkop_bunny/models/sale_model.dart';
 
-// Data Models
-class Product {
-  String id;
-  String name;
-  String category;
-  double price;
-  int stock;
-  String unit;
-  String description;
-  DateTime createdAt;
-  String imageUrl;
-
-  Product({
-    required this.id,
-    required this.name,
-    required this.category,
-    required this.price,
-    required this.stock,
-    required this.unit,
-    required this.description,
-    required this.createdAt,
-    this.imageUrl = '',
-  });
-}
-
-class RawMaterial {
-  String id;
-  String name;
-  String supplier;
-  int stock;
-  String unit;
-  int minStock;
-  double price;
-  DateTime lastRestocked;
-  DateTime expiryDate;
-
-  RawMaterial({
-    required this.id,
-    required this.name,
-    required this.supplier,
-    required this.stock,
-    required this.unit,
-    required this.minStock,
-    required this.price,
-    required this.lastRestocked,
-    required this.expiryDate,
-  });
-}
-
-class Sale {
-  String id;
-  String productId;
-  String productName;
-  int quantity;
-  double unitPrice;
-  double totalPrice;
-  DateTime saleDate;
-  String customerName;
-  String paymentMethod;
-
-  Sale({
-    required this.id,
-    required this.productId,
-    required this.productName,
-    required this.quantity,
-    required this.unitPrice,
-    required this.totalPrice,
-    required this.saleDate,
-    required this.customerName,
-    required this.paymentMethod,
-  });
-}
 
 class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+  const MainPage({super.key});
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
+  final authService = AuthService;
+
   late AnimationController _animationController;
   late AnimationController _fabAnimationController;
   late Animation<double> _fadeAnimation;
@@ -4238,8 +4172,9 @@ Future<void> _shareBackupFile(String filePath) async {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
-              _showSuccessSnackBar('Berhasil keluar dari aplikasi');
+              // AuthService.signOut();
+              // Navigator.pop(context);
+              // _showSuccessSnackBar('Berhasil keluar dari aplikasi');
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Keluar', style: TextStyle(color: Colors.white)),
