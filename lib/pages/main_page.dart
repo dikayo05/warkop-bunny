@@ -18,7 +18,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
-  final authService = AuthService;
+  final _authService = AuthService();
 
   late AnimationController _animationController;
   late AnimationController _fabAnimationController;
@@ -4172,9 +4172,9 @@ Future<void> _shareBackupFile(String filePath) async {
           ),
           ElevatedButton(
             onPressed: () {
-              // AuthService.signOut();
-              // Navigator.pop(context);
-              // _showSuccessSnackBar('Berhasil keluar dari aplikasi');
+              Navigator.pop(context);
+              _showSuccessSnackBar('Berhasil keluar dari aplikasi');
+                _authService.signOut();
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Keluar', style: TextStyle(color: Colors.white)),
