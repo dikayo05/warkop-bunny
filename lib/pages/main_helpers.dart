@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class MainHelpers {
   static String formatCurrency(double amount) {
     if (amount >= 1000000) {
