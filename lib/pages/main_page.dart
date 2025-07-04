@@ -3975,9 +3975,7 @@ Future<String?> _saveExcelFile(Excel excel, String fileName) async {
     
     if (Platform.isAndroid) {
       directory = await getExternalStorageDirectory();
-      if (directory == null) {
-        directory = await getApplicationDocumentsDirectory();
-      }
+      directory ??= await getApplicationDocumentsDirectory();
     } else {
       directory = await getApplicationDocumentsDirectory();
     }

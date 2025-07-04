@@ -22,7 +22,7 @@ class _ProfileTabState extends State<ProfileTab> {
   @override
   Widget build(BuildContext context) {
     // get user email
-    final userEmail = authService.getCurrentUserEmail();
+    final userEmail = authService.getUserEmail();
 
     return Scaffold(
       appBar: AppBar(
