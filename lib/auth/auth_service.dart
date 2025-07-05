@@ -15,11 +15,24 @@ class AuthService {
   }
 
   // Sign up with email and password
-  Future<AuthResponse> signUpWithEmailPassword(
+  Future<void> signUpWithEmailPassword(
+    String name,
     String email,
     String password,
   ) async {
-    return await _supabaseClient.auth.signUp(email: email, password: password);
+    final AuthResponse response = await _supabaseClient.auth.signUp(
+      email: email,
+      password: password,
+    );
+    if (response.user != null) {
+      final userId = response.user!.id;
+
+      await Supabase.instance.client.from('profiles').insert({
+        'id': userId,
+        'name': name,
+        'updated_at': DateTime.now().toIso8601String(),
+      });
+    }
   }
 
   // Sign out
@@ -28,15 +41,14 @@ class AuthService {
   }
 
   // Get current user
-  String? getCurrentUserId() {
+  String? getUserId() {
     final user = _supabaseClient.auth.currentUser;
     return user?.id;
   }
 
-  // get current user email
-  String? getCurrentUserEmail() {
-    final session = _supabaseClient.auth.currentSession;
-    final User? user = session?.user;
+  // Get current user email
+  String? getUserEmail() {
+    final user = _supabaseClient.auth.currentUser;
     return user?.email;
   }
 }

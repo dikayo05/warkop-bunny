@@ -17,7 +17,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
@@ -25,6 +24,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isLoading = false;
 
   void _handleRegister() async {
+    final String name = _nameController.text;
     final String email = _emailController.text;
     final String password = _passwordController.text;
     final String confirmPassword = _confirmPasswordController.text;
@@ -38,7 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
             _isLoading = true;
           });
           // sign up logic here
-          await authService.signUpWithEmailPassword(email, password);
+          await authService.signUpWithEmailPassword(name, email, password);
 
           // login otomatis setelah register
           await authService.signInWithEmailPassword(email, password);
@@ -52,9 +52,11 @@ class _RegisterPageState extends State<RegisterPage> {
             );
           }
         } catch (e) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text("Error: $e")));
+          if (mounted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text("Error: $e")));
+          }
         }
       } else {
         ScaffoldMessenger.of(
@@ -70,43 +72,12 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() {
       _isLoading = false;
     });
-    // if (_formKey.currentState!.validate()) {
-    //   if (!_agreeToTerms) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Text('Harap setujui syarat dan ketentuan'),
-    //         backgroundColor: Colors.red[700],
-    //       ),
-    //     );
-    //     return;
-    //   }
-
-    //   setState(() {
-    //     _isLoading = true;
-    //   });
-
-    //   // Simulasi proses register
-    //   await Future.delayed(Duration(seconds: 2));
-
-    //   setState(() {
-    //     _isLoading = false;
-    //   });
-
-    //   // Tampilkan pesan sukses
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: Text('Pendaftaran berhasil! Selamat bergabung di Warkop!'),
-    //       backgroundColor: Colors.green[700],
-    //     ),
-    //   );
-    // }
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -299,45 +270,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                 r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                               ).hasMatch(value)) {
                                 return 'Format email tidak valid';
-                              }
-                              return null;
-                            },
-                          ),
-
-                          SizedBox(height: 16),
-
-                          // Phone Field
-                          TextFormField(
-                            controller: _phoneController,
-                            keyboardType: TextInputType.phone,
-                            decoration: InputDecoration(
-                              labelText: 'Nomor HP',
-                              prefixIcon: Icon(
-                                Icons.phone,
-                                color: Colors.brown[700],
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide(
-                                  color: Colors.brown[300]!,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide(
-                                  color: Colors.brown[700]!,
-                                  width: 2,
-                                ),
-                              ),
-                              filled: true,
-                              fillColor: Colors.brown[50],
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Nomor HP tidak boleh kosong';
-                              }
-                              if (!RegExp(r'^[0-9+\-\s]+$').hasMatch(value)) {
-                                return 'Format nomor HP tidak valid';
                               }
                               return null;
                             },
