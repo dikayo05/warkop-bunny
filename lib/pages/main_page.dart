@@ -110,7 +110,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         .select()
         .single();
     setState(() {
-      rawMaterials.add(RawMaterial.fromJson(response as Map<String, dynamic>));
+      rawMaterials.add(RawMaterial.fromJson(response));
     });
     _showSuccessSnackBar('Bahan baku berhasil ditambahkan');
   }
@@ -145,7 +145,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         .select()
         .single();
     setState(() {
-      sales.add(Sale.fromJson(response as Map<String, dynamic>));
+      sales.add(Sale.fromJson(response));
       // Update product stock locally (Supabase trigger recommended for production)
       final productIndex = products.indexWhere((p) => p.id == sale.productId);
       if (productIndex != -1) {
@@ -209,6 +209,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _fetchAllData();
+    _fetchName();
     _setupAnimations();
     // _initializeSampleData();
     _animationController.forward();
@@ -240,6 +241,22 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         curve: Curves.elasticOut,
       ),
     );
+  }
+
+  Future<void> _fetchName() async {
+    final user = Supabase.instance.client.auth.currentUser;
+
+    if (user != null) {
+      final response = await Supabase.instance.client
+          .from('profiles')
+          .select('name')
+          .eq('id', user.id)
+          .single();
+
+      setState(() {
+        name = response['name'];
+      });
+    }
   }
 
   // void _initializeSampleData() {
@@ -3720,7 +3737,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             ),
             const SizedBox(height: 16),
             Text(
-              name ?? 'Pengguna',
+              name ?? 'Tidak Diketahui',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
