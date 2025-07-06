@@ -12,12 +12,12 @@ class RawMaterialService {
 
   Future<RawMaterial?> getById(String id) async {
     final data = await _client.from(table).select().eq('id', id).single();
-    return data != null ? RawMaterial.fromJson(data) : null;
+    return RawMaterial.fromJson(data);
   }
 
   Future<RawMaterial?> create(RawMaterial rawMaterial) async {
     final data = await _client.from(table).insert(rawMaterial.toJson()).select().single();
-    return data != null ? RawMaterial.fromJson(data) : null;
+    return RawMaterial.fromJson(data);
   }
 
   Future<RawMaterial?> update(RawMaterial rawMaterial) async {
@@ -27,7 +27,7 @@ class RawMaterialService {
         .eq('id', rawMaterial.id)
         .select()
         .single();
-    return data != null ? RawMaterial.fromJson(data) : null;
+    return RawMaterial.fromJson(data);
   }
 
   Future<void> delete(String id) async {

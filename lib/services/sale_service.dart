@@ -12,12 +12,12 @@ class SaleService {
 
   Future<Sale?> getById(String id) async {
     final data = await _client.from(table).select().eq('id', id).single();
-    return data != null ? Sale.fromJson(data) : null;
+    return Sale.fromJson(data);
   }
 
   Future<Sale?> create(Sale sale) async {
     final data = await _client.from(table).insert(sale.toJson()).select().single();
-    return data != null ? Sale.fromJson(data) : null;
+    return Sale.fromJson(data);
   }
 
   Future<Sale?> update(Sale sale) async {
@@ -27,7 +27,7 @@ class SaleService {
         .eq('id', sale.id)
         .select()
         .single();
-    return data != null ? Sale.fromJson(data) : null;
+    return Sale.fromJson(data);
   }
 
   Future<void> delete(String id) async {
