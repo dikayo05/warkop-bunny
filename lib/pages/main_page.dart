@@ -333,7 +333,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withAlpha(25),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -428,7 +428,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF8B4513).withOpacity(0.3),
+            color: const Color(0xFF8B4513).withAlpha(76),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -453,18 +453,15 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           const SizedBox(height: 8),
           Text(
             'Pengelolaan bisnis Warkop Bunny mudah dan efisien',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
-              fontSize: 16,
-            ),
+            style: TextStyle(color: Colors.white.withAlpha(229), fontSize: 16),
           ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withAlpha(38),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.2)),
+              border: Border.all(color: Colors.white.withAlpha(51)),
             ),
             child: Row(
               children: [
@@ -570,12 +567,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withAlpha(15),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
         ],
-        border: Border.all(color: color.withOpacity(0.1)),
+        border: Border.all(color: color.withAlpha(25)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -588,7 +585,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withAlpha(25),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -600,7 +597,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               const Spacer(),
               Icon(
                 Icons.trending_up,
-                color: color.withOpacity(0.6),
+                color: color.withAlpha(153),
                 size: 14,
               ), // Icon trend lebih kecil
             ],
@@ -653,7 +650,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 suffix,
                 style: TextStyle(
                   fontSize: 9,
-                  color: color.withOpacity(0.7),
+                  color: color.withAlpha(178),
                   fontWeight: FontWeight.w400,
                 ),
                 maxLines: 1,
@@ -735,9 +732,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           width: 120,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withAlpha(25),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withOpacity(0.3)),
+            border: Border.all(color: color.withAlpha(76)),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -857,12 +854,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withAlpha(20),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(color: color.withOpacity(0.1)),
+          border: Border.all(color: color.withAlpha(25)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -874,7 +871,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 Container(
                   padding: EdgeInsets.all(padding * 0.6),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withAlpha(25),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(icon, color: color, size: iconSize),
@@ -882,7 +879,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 const Spacer(),
                 Icon(
                   Icons.arrow_forward_ios,
-                  color: color.withOpacity(0.6),
+                  color: color.withAlpha(153),
                   size: 12,
                 ),
               ],
@@ -956,7 +953,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.06),
+                color: Colors.black.withAlpha(15),
                 blurRadius: 8,
                 offset: const Offset(0, 3),
               ),
@@ -1007,7 +1004,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: Colors.grey.withOpacity(0.1), width: 1),
+          bottom: BorderSide(color: Colors.grey.withAlpha(25), width: 1),
         ),
       ),
       child: Row(
@@ -1015,7 +1012,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withAlpha(25),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: color, size: 22),
@@ -1043,7 +1040,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ),
           Icon(
             Icons.chevron_right,
-            color: Colors.grey.withOpacity(0.5),
+            color: Colors.grey.withAlpha(127),
             size: 20,
           ),
         ],
@@ -1261,7 +1258,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2E8B57).withOpacity(0.1),
+                    color: const Color(0xFF2E8B57).withAlpha(25),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -1393,7 +1390,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withAlpha(25),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: const Text(
@@ -1501,7 +1498,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF4682B4).withOpacity(0.1),
+                    color: const Color(0xFF4682B4).withAlpha(25),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.inventory, color: Color(0xFF4682B4)),
@@ -1678,7 +1675,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
+                        color: Colors.red.withAlpha(25),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Text(
@@ -1697,7 +1694,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.1),
+                        color: Colors.orange.withAlpha(25),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Text(
@@ -1806,7 +1803,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF8C00).withOpacity(0.1),
+                    color: const Color(0xFFFF8C00).withAlpha(25),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -2143,7 +2140,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         leading: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: _getCategoryColor(category).withOpacity(0.1),
+                            color: _getCategoryColor(category).withAlpha(25),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
@@ -2407,10 +2404,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                               horizontal: 12,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF4682B4).withOpacity(0.1),
+                              color: const Color(0xFF4682B4).withAlpha(25),
                               borderRadius: BorderRadius.circular(6),
                               border: Border.all(
-                                color: const Color(0xFF4682B4).withOpacity(0.3),
+                                color: const Color(0xFF4682B4).withAlpha(76),
                               ),
                             ),
                             child: const Row(
@@ -2862,11 +2859,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.05),
+                          color: Colors.blue.withAlpha(12),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Colors.blue.withOpacity(0.2),
-                          ),
+                          border: Border.all(color: Colors.blue.withAlpha(51)),
                         ),
                         child: () {
                           final selectedProduct = products.firstWhere(
@@ -3024,15 +3019,15 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            const Color(0xFF2E8B57).withOpacity(0.1),
-                            const Color(0xFF2E8B57).withOpacity(0.05),
+                            const Color(0xFF2E8B57).withAlpha(25),
+                            const Color(0xFF2E8B57).withAlpha(12),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: const Color(0xFF2E8B57).withOpacity(0.3),
+                          color: const Color(0xFF2E8B57).withAlpha(76),
                         ),
                       ),
                       child: Column(
@@ -3638,9 +3633,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withAlpha(25),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withAlpha(76)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -3705,9 +3700,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: (activity['color'] as Color).withOpacity(
-                    0.1,
-                  ),
+                  backgroundColor: (activity['color'] as Color).withAlpha(25),
                   child: Icon(
                     activity['icon'] as IconData,
                     color: activity['color'] as Color,
@@ -3816,10 +3809,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   //             child: Container(
   //               padding: const EdgeInsets.all(16),
   //               decoration: BoxDecoration(
-  //                 color: const Color(0xFF2E8B57).withOpacity(0.1),
+  //                 color: const Color(0xFF2E8B57).withAlpha(0.1),
   //                 borderRadius: BorderRadius.circular(12),
   //                 border: Border.all(
-  //                   color: const Color(0xFF2E8B57).withOpacity(0.3),
+  //                   color: const Color(0xFF2E8B57).withAlpha(0.3),
   //                 ),
   //               ),
   //               child: const Row(
@@ -3865,10 +3858,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   //             child: Container(
   //               padding: const EdgeInsets.all(16),
   //               decoration: BoxDecoration(
-  //                 color: const Color(0xFF4682B4).withOpacity(0.1),
+  //                 color: const Color(0xFF4682B4).withAlpha(0.1),
   //                 borderRadius: BorderRadius.circular(12),
   //                 border: Border.all(
-  //                   color: const Color(0xFF4682B4).withOpacity(0.3),
+  //                   color: const Color(0xFF4682B4).withAlpha(0.3),
   //                 ),
   //               ),
   //               child: const Row(
@@ -3914,10 +3907,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   //             child: Container(
   //               padding: const EdgeInsets.all(16),
   //               decoration: BoxDecoration(
-  //                 color: const Color(0xFFFF8C00).withOpacity(0.1),
+  //                 color: const Color(0xFFFF8C00).withAlpha(0.1),
   //                 borderRadius: BorderRadius.circular(12),
   //                 border: Border.all(
-  //                   color: const Color(0xFFFF8C00).withOpacity(0.3),
+  //                   color: const Color(0xFFFF8C00).withAlpha(0.3),
   //                 ),
   //               ),
   //               child: const Row(
@@ -4891,10 +4884,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2E8B57).withOpacity(0.1),
+                      color: const Color(0xFF2E8B57).withAlpha(25),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Color(0xFF2E8B57).withOpacity(0.3),
+                        color: const Color(0xFF2E8B57).withAlpha(76),
                       ),
                     ),
                     child: Column(
@@ -5082,7 +5075,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: const Color(0xFF2E8B57).withOpacity(0.1),
+              backgroundColor: const Color(0xFF2E8B57).withAlpha(25),
               child: Text(
                 '${index + 1}',
                 style: const TextStyle(
@@ -5142,7 +5135,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFFFF8C00).withOpacity(0.1),
+                color: const Color(0xFFFF8C00).withAlpha(25),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -5240,7 +5233,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: methodColor.withOpacity(0.1),
+                color: methodColor.withAlpha(25),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(methodIcon, color: methodColor, size: 20),
