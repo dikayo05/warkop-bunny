@@ -263,147 +263,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     }
   }
 
-  // void _initializeSampleData() {
-  //   // Sample Products
-  //   products = [
-  //     Product(
-  //       id: '1',
-  //       name: 'Kopi Hitam',
-  //       category: 'Minuman Panas',
-  //       price: 8000,
-  //       stock: 50,
-  //       unit: 'gelas',
-  //       description: 'Kopi hitam original dengan biji pilihan',
-  //       createdAt: DateTime.now().subtract(const Duration(days: 5)),
-  //     ),
-  //     Product(
-  //       id: '2',
-  //       name: 'Es Kopi Susu',
-  //       category: 'Minuman Dingin',
-  //       price: 12000,
-  //       stock: 8,
-  //       unit: 'gelas',
-  //       description: 'Perpaduan kopi dan susu segar dengan es',
-  //       createdAt: DateTime.now().subtract(const Duration(days: 3)),
-  //     ),
-  //     Product(
-  //       id: '3',
-  //       name: 'Mie Ayam',
-  //       category: 'Makanan',
-  //       price: 15000,
-  //       stock: 25,
-  //       unit: 'porsi',
-  //       description: 'Mie ayam dengan topping lengkap',
-  //       createdAt: DateTime.now().subtract(const Duration(days: 2)),
-  //     ),
-  //     Product(
-  //       id: '4',
-  //       name: 'Nasi Goreng',
-  //       category: 'Makanan',
-  //       price: 18000,
-  //       stock: 30,
-  //       unit: 'porsi',
-  //       description: 'Nasi goreng spesial dengan telur',
-  //       createdAt: DateTime.now().subtract(const Duration(days: 1)),
-  //     ),
-  //     Product(
-  //       id: '5',
-  //       name: 'Teh Manis',
-  //       category: 'Minuman Panas',
-  //       price: 5000,
-  //       stock: 5,
-  //       unit: 'gelas',
-  //       description: 'Teh manis hangat tradisional',
-  //       createdAt: DateTime.now(),
-  //     ),
-  //   ];
-
-  //   // Sample Raw Materials
-  //   rawMaterials = [
-  //     RawMaterial(
-  //       id: '1',
-  //       name: 'Kopi Arabica',
-  //       supplier: 'CV Kopi Nusantara',
-  //       stock: 50,
-  //       unit: 'kg',
-  //       minStock: 20,
-  //       price: 85000,
-  //       lastRestocked: DateTime.now().subtract(const Duration(days: 3)),
-  //       expiryDate: DateTime.now().add(const Duration(days: 180)),
-  //     ),
-  //     RawMaterial(
-  //       id: '2',
-  //       name: 'Gula Pasir',
-  //       supplier: 'Toko Sembako Jaya',
-  //       stock: 15,
-  //       unit: 'kg',
-  //       minStock: 25,
-  //       price: 14000,
-  //       lastRestocked: DateTime.now().subtract(const Duration(days: 7)),
-  //       expiryDate: DateTime.now().add(const Duration(days: 365)),
-  //     ),
-  //     RawMaterial(
-  //       id: '3',
-  //       name: 'Susu Kental Manis',
-  //       supplier: 'Distributor Susu',
-  //       stock: 40,
-  //       unit: 'kaleng',
-  //       minStock: 20,
-  //       price: 8500,
-  //       lastRestocked: DateTime.now().subtract(const Duration(days: 2)),
-  //       expiryDate: DateTime.now().add(const Duration(days: 120)),
-  //     ),
-  //     RawMaterial(
-  //       id: '4',
-  //       name: 'Telur Ayam',
-  //       supplier: 'Peternakan Segar',
-  //       stock: 8,
-  //       unit: 'kg',
-  //       minStock: 15,
-  //       price: 28000,
-  //       lastRestocked: DateTime.now().subtract(const Duration(days: 1)),
-  //       expiryDate: DateTime.now().add(const Duration(days: 14)),
-  //     ),
-  //   ];
-
-  //   // Sample Sales
-  //   sales = [
-  //     Sale(
-  //       id: '1',
-  //       productId: '1',
-  //       productName: 'Kopi Hitam',
-  //       quantity: 5,
-  //       unitPrice: 8000,
-  //       totalPrice: 40000,
-  //       saleDate: DateTime.now().subtract(const Duration(hours: 2)),
-  //       customerName: 'Budi Santoso',
-  //       paymentMethod: 'Tunai',
-  //     ),
-  //     Sale(
-  //       id: '2',
-  //       productId: '2',
-  //       productName: 'Es Kopi Susu',
-  //       quantity: 3,
-  //       unitPrice: 12000,
-  //       totalPrice: 36000,
-  //       saleDate: DateTime.now().subtract(const Duration(hours: 1)),
-  //       customerName: 'Siti Aminah',
-  //       paymentMethod: 'Transfer',
-  //     ),
-  //     Sale(
-  //       id: '3',
-  //       productId: '3',
-  //       productName: 'Mie Ayam',
-  //       quantity: 2,
-  //       unitPrice: 15000,
-  //       totalPrice: 30000,
-  //       saleDate: DateTime.now().subtract(const Duration(minutes: 30)),
-  //       customerName: 'Ahmad Rizki',
-  //       paymentMethod: 'Tunai',
-  //     ),
-  //   ];
-  // }
-
   @override
   void dispose() {
     _animationController.dispose();
@@ -1315,92 +1174,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
   }
 
-  // CRUD Operations for Products
-  // void _addProduct(Product product) {
-  //   setState(() {
-  //     products.add(product);
-  //   });
-  //   _showSuccessSnackBar('Produk berhasil ditambahkan');
-  // }
-
-  // void _updateProduct(Product updatedProduct) {
-  //   setState(() {
-  //     final index = products.indexWhere((p) => p.id == updatedProduct.id);
-  //     if (index != -1) {
-  //       products[index] = updatedProduct;
-  //     }
-  //   });
-  //   _showSuccessSnackBar('Produk berhasil diperbarui');
-  // }
-
-  // void _deleteProduct(String productId) {
-  //   setState(() {
-  //     products.removeWhere((p) => p.id == productId);
-  //   });
-  //   _showSuccessSnackBar('Produk berhasil dihapus');
-  // }
-
-  // // CRUD Operations for Raw Materials
-  // void _addRawMaterial(RawMaterial material) {
-  //   setState(() {
-  //     rawMaterials.add(material);
-  //   });
-  //   _showSuccessSnackBar('Bahan baku berhasil ditambahkan');
-  // }
-
-  // void _updateRawMaterial(RawMaterial updatedMaterial) {
-  //   setState(() {
-  //     final index = rawMaterials.indexWhere((m) => m.id == updatedMaterial.id);
-  //     if (index != -1) {
-  //       rawMaterials[index] = updatedMaterial;
-  //     }
-  //   });
-  //   _showSuccessSnackBar('Bahan baku berhasil diperbarui');
-  // }
-
-  // void _deleteRawMaterial(String materialId) {
-  //   setState(() {
-  //     rawMaterials.removeWhere((m) => m.id == materialId);
-  //   });
-  //   _showSuccessSnackBar('Bahan baku berhasil dihapus');
-  // }
-
-  // // CRUD Operations for Sales
-  // void _addSale(Sale sale) {
-  //   setState(() {
-  //     sales.add(sale);
-  //     // Update product stock
-  //     final productIndex = products.indexWhere((p) => p.id == sale.productId);
-  //     if (productIndex != -1) {
-  //       products[productIndex].stock -= sale.quantity;
-  //     }
-  //   });
-  //   _showSuccessSnackBar('Penjualan berhasil dicatat');
-  // }
-
-  // void _updateSale(Sale updatedSale) {
-  //   setState(() {
-  //     final index = sales.indexWhere((s) => s.id == updatedSale.id);
-  //     if (index != -1) {
-  //       sales[index] = updatedSale;
-  //     }
-  //   });
-  //   _showSuccessSnackBar('Data penjualan berhasil diperbarui');
-  // }
-
-  // void _deleteSale(String saleId) {
-  //   setState(() {
-  //     final saleToDelete = sales.firstWhere((s) => s.id == saleId);
-  //     // Restore product stock
-  //     final productIndex = products.indexWhere((p) => p.id == saleToDelete.productId);
-  //     if (productIndex != -1) {
-  //       products[productIndex].stock += saleToDelete.quantity;
-  //     }
-  //     sales.removeWhere((s) => s.id == saleId);
-  //   });
-  //   _showSuccessSnackBar('Data penjualan berhasil dihapus');
-  // }
-
   // UI Components for CRUD Operations
   Widget _buildProductManagementModal() {
     return DraggableScrollableSheet(
@@ -1762,7 +1535,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         _showRawMaterialForm(context, material: material);
                         break;
                       case 'delete':
-                        _showDeleteConfirmation(
+                        ShowDeleteConfirmation(
                           context,
                           'Hapus Bahan Baku',
                           'Apakah Anda yakin ingin menghapus ${material.name}?',
@@ -2070,7 +1843,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         _showSaleForm(context, sale: sale);
                         break;
                       case 'delete':
-                        _showDeleteConfirmation(
+                        ShowDeleteConfirmation(
                           context,
                           'Hapus Penjualan',
                           'Apakah Anda yakin ingin menghapus data penjualan ini?',
@@ -3676,22 +3449,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       ),
                     ),
                   ],
-
-                  // General notifications
-                  // const ListTile(
-                  //   leading: Icon(Icons.celebration, color: Colors.green),
-                  //   title: Text('Target Penjualan Tercapai'),
-                  //   subtitle: Text(
-                  //     'Penjualan hari ini mencapai target yang ditetapkan',
-                  //   ),
-                  //   trailing: Text('Hari ini'),
-                  // ),
-                  // const ListTile(
-                  //   leading: Icon(Icons.backup, color: Colors.blue),
-                  //   title: Text('Backup Otomatis Berhasil'),
-                  //   subtitle: Text('Data berhasil di-backup secara otomatis'),
-                  //   trailing: Text('1 jam lalu'),
-                  // ),
                 ],
               ),
             ),
@@ -5546,8 +5303,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 }
 
-class _showDeleteConfirmation {
-  _showDeleteConfirmation(
+class ShowDeleteConfirmation {
+  ShowDeleteConfirmation(
     BuildContext context,
     String s,
     String t,
