@@ -26,7 +26,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   late Animation<double> _fabAnimation;
 
   // Data Collections
-  // Supabase data collections
   List<Product> products = [];
   List<RawMaterial> rawMaterials = [];
   List<Sale> sales = [];
