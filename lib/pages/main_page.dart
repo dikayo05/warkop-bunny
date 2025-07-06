@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 // import 'package:permission_handler/permission_handler.dart';
 // import 'package:share_plus/share_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:warkop_bunny/auth/auth_service.dart';
+import 'package:warkop_bunny/services/auth/auth_service.dart';
 import 'package:warkop_bunny/models/product.dart';
 import 'package:warkop_bunny/models/raw_material.dart';
 import 'package:warkop_bunny/models/sale.dart';
