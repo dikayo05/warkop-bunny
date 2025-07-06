@@ -1,9 +1,9 @@
-import 'dart:io';
-import 'package:excel/excel.dart' hide Border;
+// import 'dart:io';
+// import 'package:excel/excel.dart' hide Border;
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:share_plus/share_plus.dart';
+// import 'package:path_provider/path_provider.dart';
+// import 'package:permission_handler/permission_handler.dart';
+// import 'package:share_plus/share_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:warkop_bunny/auth/auth_service.dart';
 import 'package:warkop_bunny/models/product.dart';
@@ -4036,809 +4036,809 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     _showSuccessSnackBar('Laporan stok sedang disiapkan...');
   }
 
-  void _showBackupDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.backup, color: Color(0xFF8B4513)),
-            SizedBox(width: 8),
-            Text('Backup Data'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Pilih jenis backup yang ingin dilakukan:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(height: 20),
+  // void _showBackupDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: const Row(
+  //         children: [
+  //           Icon(Icons.backup, color: Color(0xFF8B4513)),
+  //           SizedBox(width: 8),
+  //           Text('Backup Data'),
+  //         ],
+  //       ),
+  //       content: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           const Text(
+  //             'Pilih jenis backup yang ingin dilakukan:',
+  //             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+  //           ),
+  //           const SizedBox(height: 20),
 
-            // Option 1: Backup Complete
-            InkWell(
-              onTap: () {
-                Navigator.pop(context);
-                _performCompleteBackup();
-              },
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2E8B57).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xFF2E8B57).withOpacity(0.3),
-                  ),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(
-                      Icons.backup_table,
-                      color: Color(0xFF2E8B57),
-                      size: 28,
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Backup Lengkap',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Semua data (Produk, Bahan Baku, Penjualan)',
-                            style: TextStyle(color: Colors.grey, fontSize: 14),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+  //           // Option 1: Backup Complete
+  //           InkWell(
+  //             onTap: () {
+  //               Navigator.pop(context);
+  //               _performCompleteBackup();
+  //             },
+  //             child: Container(
+  //               padding: const EdgeInsets.all(16),
+  //               decoration: BoxDecoration(
+  //                 color: const Color(0xFF2E8B57).withOpacity(0.1),
+  //                 borderRadius: BorderRadius.circular(12),
+  //                 border: Border.all(
+  //                   color: const Color(0xFF2E8B57).withOpacity(0.3),
+  //                 ),
+  //               ),
+  //               child: const Row(
+  //                 children: [
+  //                   Icon(
+  //                     Icons.backup_table,
+  //                     color: Color(0xFF2E8B57),
+  //                     size: 28,
+  //                   ),
+  //                   SizedBox(width: 16),
+  //                   Expanded(
+  //                     child: Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: [
+  //                         Text(
+  //                           'Backup Lengkap',
+  //                           style: TextStyle(
+  //                             fontWeight: FontWeight.bold,
+  //                             fontSize: 16,
+  //                           ),
+  //                         ),
+  //                         SizedBox(height: 4),
+  //                         Text(
+  //                           'Semua data (Produk, Bahan Baku, Penjualan)',
+  //                           style: TextStyle(color: Colors.grey, fontSize: 14),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
 
-            const SizedBox(height: 12),
+  //           const SizedBox(height: 12),
 
-            // Option 2: Backup Produk Only
-            InkWell(
-              onTap: () {
-                Navigator.pop(context);
-                _performProductBackup();
-              },
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF4682B4).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xFF4682B4).withOpacity(0.3),
-                  ),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(
-                      Icons.restaurant_menu,
-                      color: Color(0xFF4682B4),
-                      size: 28,
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Backup Produk',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Data produk dan stok saja',
-                            style: TextStyle(color: Colors.grey, fontSize: 14),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+  //           // Option 2: Backup Produk Only
+  //           InkWell(
+  //             onTap: () {
+  //               Navigator.pop(context);
+  //               _performProductBackup();
+  //             },
+  //             child: Container(
+  //               padding: const EdgeInsets.all(16),
+  //               decoration: BoxDecoration(
+  //                 color: const Color(0xFF4682B4).withOpacity(0.1),
+  //                 borderRadius: BorderRadius.circular(12),
+  //                 border: Border.all(
+  //                   color: const Color(0xFF4682B4).withOpacity(0.3),
+  //                 ),
+  //               ),
+  //               child: const Row(
+  //                 children: [
+  //                   Icon(
+  //                     Icons.restaurant_menu,
+  //                     color: Color(0xFF4682B4),
+  //                     size: 28,
+  //                   ),
+  //                   SizedBox(width: 16),
+  //                   Expanded(
+  //                     child: Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: [
+  //                         Text(
+  //                           'Backup Produk',
+  //                           style: TextStyle(
+  //                             fontWeight: FontWeight.bold,
+  //                             fontSize: 16,
+  //                           ),
+  //                         ),
+  //                         SizedBox(height: 4),
+  //                         Text(
+  //                           'Data produk dan stok saja',
+  //                           style: TextStyle(color: Colors.grey, fontSize: 14),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
 
-            const SizedBox(height: 12),
+  //           const SizedBox(height: 12),
 
-            // Option 3: Backup Penjualan Only
-            InkWell(
-              onTap: () {
-                Navigator.pop(context);
-                _performSalesBackup();
-              },
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFF8C00).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xFFFF8C00).withOpacity(0.3),
-                  ),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(
-                      Icons.point_of_sale,
-                      color: Color(0xFFFF8C00),
-                      size: 28,
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Backup Penjualan',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Data transaksi penjualan saja',
-                            style: TextStyle(color: Colors.grey, fontSize: 14),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Batal'),
-          ),
-        ],
-      ),
-    );
-  }
+  //           // Option 3: Backup Penjualan Only
+  //           InkWell(
+  //             onTap: () {
+  //               Navigator.pop(context);
+  //               _performSalesBackup();
+  //             },
+  //             child: Container(
+  //               padding: const EdgeInsets.all(16),
+  //               decoration: BoxDecoration(
+  //                 color: const Color(0xFFFF8C00).withOpacity(0.1),
+  //                 borderRadius: BorderRadius.circular(12),
+  //                 border: Border.all(
+  //                   color: const Color(0xFFFF8C00).withOpacity(0.3),
+  //                 ),
+  //               ),
+  //               child: const Row(
+  //                 children: [
+  //                   Icon(
+  //                     Icons.point_of_sale,
+  //                     color: Color(0xFFFF8C00),
+  //                     size: 28,
+  //                   ),
+  //                   SizedBox(width: 16),
+  //                   Expanded(
+  //                     child: Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: [
+  //                         Text(
+  //                           'Backup Penjualan',
+  //                           style: TextStyle(
+  //                             fontWeight: FontWeight.bold,
+  //                             fontSize: 16,
+  //                           ),
+  //                         ),
+  //                         SizedBox(height: 4),
+  //                         Text(
+  //                           'Data transaksi penjualan saja',
+  //                           style: TextStyle(color: Colors.grey, fontSize: 14),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: const Text('Batal'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   // Method untuk backup lengkap
-  Future<void> _performCompleteBackup() async {
-    try {
-      // Show loading dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const AlertDialog(
-          content: Row(
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 16),
-              Text('Memproses backup...'),
-            ],
-          ),
-        ),
-      );
+  // Future<void> _performCompleteBackup() async {
+  //   try {
+  //     // Show loading dialog
+  //     showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (context) => const AlertDialog(
+  //         content: Row(
+  //           children: [
+  //             CircularProgressIndicator(),
+  //             SizedBox(width: 16),
+  //             Text('Memproses backup...'),
+  //           ],
+  //         ),
+  //       ),
+  //     );
 
-      // Request storage permission
-      if (await _requestStoragePermission()) {
-        final excel = Excel.createExcel();
+  //     // Request storage permission
+  //     if (await _requestStoragePermission()) {
+  //       final excel = Excel.createExcel();
 
-        // Remove default sheet
-        excel.delete('Sheet1');
+  //       // Remove default sheet
+  //       excel.delete('Sheet1');
 
-        // Create sheets
-        await _createProductSheet(excel);
-        await _createRawMaterialSheet(excel);
-        await _createSalesSheet(excel);
-        await _createSummarySheet(excel);
+  //       // Create sheets
+  //       await _createProductSheet(excel);
+  //       await _createRawMaterialSheet(excel);
+  //       await _createSalesSheet(excel);
+  //       await _createSummarySheet(excel);
 
-        // Save file
-        final filePath = await _saveExcelFile(
-          excel,
-          'WarkopBunny_Backup_Complete',
-        );
+  //       // Save file
+  //       final filePath = await _saveExcelFile(
+  //         excel,
+  //         'WarkopBunny_Backup_Complete',
+  //       );
 
-        Navigator.pop(context); // Close loading dialog
+  //       Navigator.pop(context); // Close loading dialog
 
-        if (filePath != null) {
-          _showBackupSuccessDialog(filePath);
-        }
-      } else {
-        Navigator.pop(context);
-        _showErrorSnackBar('Permission ditolak. Tidak dapat menyimpan file.');
-      }
-    } catch (e) {
-      Navigator.pop(context);
-      _showErrorSnackBar('Error saat backup: $e');
-    }
-  }
+  //       if (filePath != null) {
+  //         _showBackupSuccessDialog(filePath);
+  //       }
+  //     } else {
+  //       Navigator.pop(context);
+  //       _showErrorSnackBar('Permission ditolak. Tidak dapat menyimpan file.');
+  //     }
+  //   } catch (e) {
+  //     Navigator.pop(context);
+  //     _showErrorSnackBar('Error saat backup: $e');
+  //   }
+  // }
 
-  Future<void> _performProductBackup() async {
-    try {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const AlertDialog(
-          content: Row(
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 16),
-              Text('Memproses backup produk...'),
-            ],
-          ),
-        ),
-      );
+  // Future<void> _performProductBackup() async {
+  //   try {
+  //     showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (context) => const AlertDialog(
+  //         content: Row(
+  //           children: [
+  //             CircularProgressIndicator(),
+  //             SizedBox(width: 16),
+  //             Text('Memproses backup produk...'),
+  //           ],
+  //         ),
+  //       ),
+  //     );
 
-      if (await _requestStoragePermission()) {
-        final excel = Excel.createExcel();
-        excel.delete('Sheet1');
+  //     if (await _requestStoragePermission()) {
+  //       final excel = Excel.createExcel();
+  //       excel.delete('Sheet1');
 
-        await _createProductSheet(excel);
+  //       await _createProductSheet(excel);
 
-        final filePath = await _saveExcelFile(
-          excel,
-          'WarkopBunny_Backup_Produk',
-        );
+  //       final filePath = await _saveExcelFile(
+  //         excel,
+  //         'WarkopBunny_Backup_Produk',
+  //       );
 
-        Navigator.pop(context);
+  //       Navigator.pop(context);
 
-        if (filePath != null) {
-          _showBackupSuccessDialog(filePath);
-        }
-      } else {
-        Navigator.pop(context);
-        _showErrorSnackBar('Permission ditolak. Tidak dapat menyimpan file.');
-      }
-    } catch (e) {
-      Navigator.pop(context);
-      _showErrorSnackBar('Error saat backup produk: $e');
-    }
-  }
+  //       if (filePath != null) {
+  //         _showBackupSuccessDialog(filePath);
+  //       }
+  //     } else {
+  //       Navigator.pop(context);
+  //       _showErrorSnackBar('Permission ditolak. Tidak dapat menyimpan file.');
+  //     }
+  //   } catch (e) {
+  //     Navigator.pop(context);
+  //     _showErrorSnackBar('Error saat backup produk: $e');
+  //   }
+  // }
 
   // Method untuk backup penjualan saja
-  Future<void> _performSalesBackup() async {
-    try {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const AlertDialog(
-          content: Row(
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 16),
-              Text('Memproses backup penjualan...'),
-            ],
-          ),
-        ),
-      );
+  // Future<void> _performSalesBackup() async {
+  //   try {
+  //     showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (context) => const AlertDialog(
+  //         content: Row(
+  //           children: [
+  //             CircularProgressIndicator(),
+  //             SizedBox(width: 16),
+  //             Text('Memproses backup penjualan...'),
+  //           ],
+  //         ),
+  //       ),
+  //     );
 
-      if (await _requestStoragePermission()) {
-        final excel = Excel.createExcel();
-        excel.delete('Sheet1');
+  //     if (await _requestStoragePermission()) {
+  //       final excel = Excel.createExcel();
+  //       excel.delete('Sheet1');
 
-        await _createSalesSheet(excel);
+  //       await _createSalesSheet(excel);
 
-        final filePath = await _saveExcelFile(
-          excel,
-          'WarkopBunny_Backup_Penjualan',
-        );
+  //       final filePath = await _saveExcelFile(
+  //         excel,
+  //         'WarkopBunny_Backup_Penjualan',
+  //       );
 
-        Navigator.pop(context);
+  //       Navigator.pop(context);
 
-        if (filePath != null) {
-          _showBackupSuccessDialog(filePath);
-        }
-      } else {
-        Navigator.pop(context);
-        _showErrorSnackBar('Permission ditolak. Tidak dapat menyimpan file.');
-      }
-    } catch (e) {
-      Navigator.pop(context);
-      _showErrorSnackBar('Error saat backup penjualan: $e');
-    }
-  }
+  //       if (filePath != null) {
+  //         _showBackupSuccessDialog(filePath);
+  //       }
+  //     } else {
+  //       Navigator.pop(context);
+  //       _showErrorSnackBar('Permission ditolak. Tidak dapat menyimpan file.');
+  //     }
+  //   } catch (e) {
+  //     Navigator.pop(context);
+  //     _showErrorSnackBar('Error saat backup penjualan: $e');
+  //   }
+  // }
 
   // Method untuk request storage permission
-  Future<bool> _requestStoragePermission() async {
-    if (Platform.isAndroid) {
-      final status = await Permission.storage.request();
-      if (status.isDenied) {
-        final statusManage = await Permission.manageExternalStorage.request();
-        return statusManage.isGranted;
-      }
-      return status.isGranted;
-    }
-    return true; // iOS tidak perlu permission khusus untuk Documents directory
-  }
+  // Future<bool> _requestStoragePermission() async {
+  //   if (Platform.isAndroid) {
+  //     final status = await Permission.storage.request();
+  //     if (status.isDenied) {
+  //       final statusManage = await Permission.manageExternalStorage.request();
+  //       return statusManage.isGranted;
+  //     }
+  //     return status.isGranted;
+  //   }
+  //   return true; // iOS tidak perlu permission khusus untuk Documents directory
+  // }
 
   // Method untuk membuat sheet produk
-  Future<void> _createProductSheet(Excel excel) async {
-    final sheet = excel['Produk'];
+  // Future<void> _createProductSheet(Excel excel) async {
+  //   final sheet = excel['Produk'];
 
-    // Header styling
-    final headerStyle = CellStyle(
-      backgroundColorHex: ExcelColor.blue,
-      fontColorHex: ExcelColor.white,
-      bold: true,
-    );
+  //   // Header styling
+  //   final headerStyle = CellStyle(
+  //     backgroundColorHex: ExcelColor.blue,
+  //     fontColorHex: ExcelColor.white,
+  //     bold: true,
+  //   );
 
-    // Set headers
-    final headers = [
-      'ID',
-      'Nama Produk',
-      'Kategori',
-      'Harga',
-      'Stok',
-      'Satuan',
-      'Deskripsi',
-      'Tanggal Dibuat',
-      'Status Stok',
-    ];
+  //   // Set headers
+  //   final headers = [
+  //     'ID',
+  //     'Nama Produk',
+  //     'Kategori',
+  //     'Harga',
+  //     'Stok',
+  //     'Satuan',
+  //     'Deskripsi',
+  //     'Tanggal Dibuat',
+  //     'Status Stok',
+  //   ];
 
-    for (int i = 0; i < headers.length; i++) {
-      final cell = sheet.cell(
-        CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0),
-      );
-      cell.value = TextCellValue(headers[i]);
-      cell.cellStyle = headerStyle;
-    }
+  //   for (int i = 0; i < headers.length; i++) {
+  //     final cell = sheet.cell(
+  //       CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0),
+  //     );
+  //     cell.value = TextCellValue(headers[i]);
+  //     cell.cellStyle = headerStyle;
+  //   }
 
-    // Fill data
-    for (int i = 0; i < products.length; i++) {
-      final product = products[i];
-      final row = i + 1;
+  //   // Fill data
+  //   for (int i = 0; i < products.length; i++) {
+  //     final product = products[i];
+  //     final row = i + 1;
 
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: row))
-          .value = TextCellValue(
-        product.id,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: row))
-          .value = TextCellValue(
-        product.name,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: row))
-          .value = TextCellValue(
-        product.category,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: row))
-          .value = DoubleCellValue(
-        product.price,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: row))
-          .value = IntCellValue(
-        product.stock,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: row))
-          .value = TextCellValue(
-        product.unit,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: row))
-          .value = TextCellValue(
-        product.description,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: row))
-          .value = TextCellValue(
-        _formatDateTime(product.createdAt),
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: row))
-          .value = TextCellValue(
-        product.stock <= 10 ? 'Stok Rendah' : 'Normal',
-      );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: row))
+  //         .value = TextCellValue(
+  //       product.id,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: row))
+  //         .value = TextCellValue(
+  //       product.name,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: row))
+  //         .value = TextCellValue(
+  //       product.category,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: row))
+  //         .value = DoubleCellValue(
+  //       product.price,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: row))
+  //         .value = IntCellValue(
+  //       product.stock,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: row))
+  //         .value = TextCellValue(
+  //       product.unit,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: row))
+  //         .value = TextCellValue(
+  //       product.description,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: row))
+  //         .value = TextCellValue(
+  //       _formatDateTime(product.createdAt),
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: row))
+  //         .value = TextCellValue(
+  //       product.stock <= 10 ? 'Stok Rendah' : 'Normal',
+  //     );
 
-      // Color coding for low stock
-      if (product.stock <= 10) {
-        final lowStockStyle = CellStyle(backgroundColorHex: ExcelColor.red);
-        sheet
-                .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: row))
-                .cellStyle =
-            lowStockStyle;
-      }
-    }
+  //     // Color coding for low stock
+  //     if (product.stock <= 10) {
+  //       final lowStockStyle = CellStyle(backgroundColorHex: ExcelColor.red);
+  //       sheet
+  //               .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: row))
+  //               .cellStyle =
+  //           lowStockStyle;
+  //     }
+  //   }
 
-    // Auto-fit columns
-    for (int i = 0; i < headers.length; i++) {
-      sheet.setColumnAutoFit(i);
-    }
-  }
+  //   // Auto-fit columns
+  //   for (int i = 0; i < headers.length; i++) {
+  //     sheet.setColumnAutoFit(i);
+  //   }
+  // }
 
   // Method untuk membuat sheet bahan baku
-  Future<void> _createRawMaterialSheet(Excel excel) async {
-    final sheet = excel['Bahan Baku'];
+  // Future<void> _createRawMaterialSheet(Excel excel) async {
+  //   final sheet = excel['Bahan Baku'];
 
-    final headerStyle = CellStyle(
-      backgroundColorHex: ExcelColor.green,
-      fontColorHex: ExcelColor.white,
-      bold: true,
-    );
+  //   final headerStyle = CellStyle(
+  //     backgroundColorHex: ExcelColor.green,
+  //     fontColorHex: ExcelColor.white,
+  //     bold: true,
+  //   );
 
-    final headers = [
-      'ID',
-      'Nama',
-      'Supplier',
-      'Stok',
-      'Satuan',
-      'Min Stok',
-      'Harga',
-      'Terakhir Restok',
-      'Tanggal Kadaluarsa',
-      'Status',
-    ];
+  //   final headers = [
+  //     'ID',
+  //     'Nama',
+  //     'Supplier',
+  //     'Stok',
+  //     'Satuan',
+  //     'Min Stok',
+  //     'Harga',
+  //     'Terakhir Restok',
+  //     'Tanggal Kadaluarsa',
+  //     'Status',
+  //   ];
 
-    for (int i = 0; i < headers.length; i++) {
-      final cell = sheet.cell(
-        CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0),
-      );
-      cell.value = TextCellValue(headers[i]);
-      cell.cellStyle = headerStyle;
-    }
+  //   for (int i = 0; i < headers.length; i++) {
+  //     final cell = sheet.cell(
+  //       CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0),
+  //     );
+  //     cell.value = TextCellValue(headers[i]);
+  //     cell.cellStyle = headerStyle;
+  //   }
 
-    for (int i = 0; i < rawMaterials.length; i++) {
-      final material = rawMaterials[i];
-      final row = i + 1;
+  //   for (int i = 0; i < rawMaterials.length; i++) {
+  //     final material = rawMaterials[i];
+  //     final row = i + 1;
 
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: row))
-          .value = TextCellValue(
-        material.id,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: row))
-          .value = TextCellValue(
-        material.name,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: row))
-          .value = TextCellValue(
-        material.supplier,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: row))
-          .value = IntCellValue(
-        material.stock,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: row))
-          .value = TextCellValue(
-        material.unit,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: row))
-          .value = IntCellValue(
-        material.minStock,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: row))
-          .value = DoubleCellValue(
-        material.price,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: row))
-          .value = TextCellValue(
-        _formatDate(material.lastRestocked),
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: row))
-          .value = TextCellValue(
-        _formatDate(material.expiryDate),
-      );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: row))
+  //         .value = TextCellValue(
+  //       material.id,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: row))
+  //         .value = TextCellValue(
+  //       material.name,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: row))
+  //         .value = TextCellValue(
+  //       material.supplier,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: row))
+  //         .value = IntCellValue(
+  //       material.stock,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: row))
+  //         .value = TextCellValue(
+  //       material.unit,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: row))
+  //         .value = IntCellValue(
+  //       material.minStock,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: row))
+  //         .value = DoubleCellValue(
+  //       material.price,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: row))
+  //         .value = TextCellValue(
+  //       _formatDate(material.lastRestocked),
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: row))
+  //         .value = TextCellValue(
+  //       _formatDate(material.expiryDate),
+  //     );
 
-      // Status calculation
-      String status = 'Normal';
-      CellStyle? statusStyle;
+  //     // Status calculation
+  //     String status = 'Normal';
+  //     CellStyle? statusStyle;
 
-      if (material.stock <= material.minStock) {
-        status = 'Perlu Restok';
-        statusStyle = CellStyle(backgroundColorHex: ExcelColor.red);
-      } else if (material.expiryDate.difference(DateTime.now()).inDays <= 30) {
-        status = 'Segera Expired';
-        statusStyle = CellStyle(backgroundColorHex: ExcelColor.orange);
-      }
+  //     if (material.stock <= material.minStock) {
+  //       status = 'Perlu Restok';
+  //       statusStyle = CellStyle(backgroundColorHex: ExcelColor.red);
+  //     } else if (material.expiryDate.difference(DateTime.now()).inDays <= 30) {
+  //       status = 'Segera Expired';
+  //       statusStyle = CellStyle(backgroundColorHex: ExcelColor.orange);
+  //     }
 
-      final statusCell = sheet.cell(
-        CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: row),
-      );
-      statusCell.value = TextCellValue(status);
-      if (statusStyle != null) {
-        statusCell.cellStyle = statusStyle;
-      }
-    }
+  //     final statusCell = sheet.cell(
+  //       CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: row),
+  //     );
+  //     statusCell.value = TextCellValue(status);
+  //     if (statusStyle != null) {
+  //       statusCell.cellStyle = statusStyle;
+  //     }
+  //   }
 
-    for (int i = 0; i < headers.length; i++) {
-      sheet.setColumnAutoFit(i);
-    }
-  }
+  //   for (int i = 0; i < headers.length; i++) {
+  //     sheet.setColumnAutoFit(i);
+  //   }
+  // }
 
   // Method untuk membuat sheet penjualan
-  Future<void> _createSalesSheet(Excel excel) async {
-    final sheet = excel['Penjualan'];
+  // Future<void> _createSalesSheet(Excel excel) async {
+  //   final sheet = excel['Penjualan'];
 
-    final headerStyle = CellStyle(
-      backgroundColorHex: ExcelColor.orange,
-      fontColorHex: ExcelColor.white,
-      bold: true,
-    );
+  //   final headerStyle = CellStyle(
+  //     backgroundColorHex: ExcelColor.orange,
+  //     fontColorHex: ExcelColor.white,
+  //     bold: true,
+  //   );
 
-    final headers = [
-      'ID',
-      'Produk',
-      'Jumlah',
-      'Harga Satuan',
-      'Total Harga',
-      'Tanggal Penjualan',
-      'Nama Pelanggan',
-      'Metode Pembayaran',
-    ];
+  //   final headers = [
+  //     'ID',
+  //     'Produk',
+  //     'Jumlah',
+  //     'Harga Satuan',
+  //     'Total Harga',
+  //     'Tanggal Penjualan',
+  //     'Nama Pelanggan',
+  //     'Metode Pembayaran',
+  //   ];
 
-    for (int i = 0; i < headers.length; i++) {
-      final cell = sheet.cell(
-        CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0),
-      );
-      cell.value = TextCellValue(headers[i]);
-      cell.cellStyle = headerStyle;
-    }
+  //   for (int i = 0; i < headers.length; i++) {
+  //     final cell = sheet.cell(
+  //       CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0),
+  //     );
+  //     cell.value = TextCellValue(headers[i]);
+  //     cell.cellStyle = headerStyle;
+  //   }
 
-    for (int i = 0; i < sales.length; i++) {
-      final sale = sales[i];
-      final row = i + 1;
+  //   for (int i = 0; i < sales.length; i++) {
+  //     final sale = sales[i];
+  //     final row = i + 1;
 
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: row))
-          .value = TextCellValue(
-        sale.id,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: row))
-          .value = TextCellValue(
-        sale.productName,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: row))
-          .value = IntCellValue(
-        sale.quantity,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: row))
-          .value = DoubleCellValue(
-        sale.unitPrice,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: row))
-          .value = DoubleCellValue(
-        sale.totalPrice,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: row))
-          .value = TextCellValue(
-        _formatDateTime(sale.saleDate),
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: row))
-          .value = TextCellValue(
-        sale.customerName,
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: row))
-          .value = TextCellValue(
-        sale.paymentMethod,
-      );
-    }
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: row))
+  //         .value = TextCellValue(
+  //       sale.id,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: row))
+  //         .value = TextCellValue(
+  //       sale.productName,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: row))
+  //         .value = IntCellValue(
+  //       sale.quantity,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: row))
+  //         .value = DoubleCellValue(
+  //       sale.unitPrice,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: row))
+  //         .value = DoubleCellValue(
+  //       sale.totalPrice,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: row))
+  //         .value = TextCellValue(
+  //       _formatDateTime(sale.saleDate),
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: row))
+  //         .value = TextCellValue(
+  //       sale.customerName,
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: row))
+  //         .value = TextCellValue(
+  //       sale.paymentMethod,
+  //     );
+  //   }
 
-    for (int i = 0; i < headers.length; i++) {
-      sheet.setColumnAutoFit(i);
-    }
-  }
+  //   for (int i = 0; i < headers.length; i++) {
+  //     sheet.setColumnAutoFit(i);
+  //   }
+  // }
 
   // Method untuk membuat sheet summary
-  Future<void> _createSummarySheet(Excel excel) async {
-    final sheet = excel['Ringkasan'];
+  // Future<void> _createSummarySheet(Excel excel) async {
+  //   final sheet = excel['Ringkasan'];
 
-    final titleStyle = CellStyle(
-      backgroundColorHex: ExcelColor.purple,
-      fontColorHex: ExcelColor.white,
-      bold: true,
-    );
+  //   final titleStyle = CellStyle(
+  //     backgroundColorHex: ExcelColor.purple,
+  //     fontColorHex: ExcelColor.white,
+  //     bold: true,
+  //   );
 
-    // Title
-    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0)).value =
-        TextCellValue('RINGKASAN DATA WARKOP BUNNY');
-    sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0))
-            .cellStyle =
-        titleStyle;
+  //   // Title
+  //   sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0)).value =
+  //       TextCellValue('RINGKASAN DATA WARKOP BUNNY');
+  //   sheet
+  //           .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 0))
+  //           .cellStyle =
+  //       titleStyle;
 
-    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 1)).value =
-        TextCellValue('Tanggal Backup: ${_formatDateTime(DateTime.now())}');
+  //   sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 1)).value =
+  //       TextCellValue('Tanggal Backup: ${_formatDateTime(DateTime.now())}');
 
-    // Statistics
-    int row = 3;
-    final stats = [
-      ['STATISTIK PRODUK', ''],
-      ['Total Produk:', products.length.toString()],
-      [
-        'Produk Stok Rendah:',
-        products.where((p) => p.stock <= 10).length.toString(),
-      ],
-      [
-        'Total Nilai Produk:',
-        'Rp ${products.fold(0.0, (sum, p) => sum + (p.price * p.stock)).toStringAsFixed(0)}',
-      ],
-      ['', ''],
-      ['STATISTIK BAHAN BAKU', ''],
-      ['Total Bahan Baku:', rawMaterials.length.toString()],
-      [
-        'Perlu Restok:',
-        rawMaterials.where((m) => m.stock <= m.minStock).length.toString(),
-      ],
-      [
-        'Segera Expired:',
-        rawMaterials
-            .where((m) => m.expiryDate.difference(DateTime.now()).inDays <= 30)
-            .length
-            .toString(),
-      ],
-      ['', ''],
-      ['STATISTIK PENJUALAN', ''],
-      ['Total Transaksi:', sales.length.toString()],
-      [
-        'Total Pendapatan:',
-        'Rp ${sales.fold(0.0, (sum, s) => sum + s.totalPrice).toStringAsFixed(0)}',
-      ],
-      ['Penjualan Hari Ini:', 'Rp ${todaySales.toStringAsFixed(0)}'],
-    ];
+  //   // Statistics
+  //   int row = 3;
+  //   final stats = [
+  //     ['STATISTIK PRODUK', ''],
+  //     ['Total Produk:', products.length.toString()],
+  //     [
+  //       'Produk Stok Rendah:',
+  //       products.where((p) => p.stock <= 10).length.toString(),
+  //     ],
+  //     [
+  //       'Total Nilai Produk:',
+  //       'Rp ${products.fold(0.0, (sum, p) => sum + (p.price * p.stock)).toStringAsFixed(0)}',
+  //     ],
+  //     ['', ''],
+  //     ['STATISTIK BAHAN BAKU', ''],
+  //     ['Total Bahan Baku:', rawMaterials.length.toString()],
+  //     [
+  //       'Perlu Restok:',
+  //       rawMaterials.where((m) => m.stock <= m.minStock).length.toString(),
+  //     ],
+  //     [
+  //       'Segera Expired:',
+  //       rawMaterials
+  //           .where((m) => m.expiryDate.difference(DateTime.now()).inDays <= 30)
+  //           .length
+  //           .toString(),
+  //     ],
+  //     ['', ''],
+  //     ['STATISTIK PENJUALAN', ''],
+  //     ['Total Transaksi:', sales.length.toString()],
+  //     [
+  //       'Total Pendapatan:',
+  //       'Rp ${sales.fold(0.0, (sum, s) => sum + s.totalPrice).toStringAsFixed(0)}',
+  //     ],
+  //     ['Penjualan Hari Ini:', 'Rp ${todaySales.toStringAsFixed(0)}'],
+  //   ];
 
-    for (final stat in stats) {
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: row))
-          .value = TextCellValue(
-        stat[0],
-      );
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: row))
-          .value = TextCellValue(
-        stat[1],
-      );
-      row++;
-    }
+  //   for (final stat in stats) {
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: row))
+  //         .value = TextCellValue(
+  //       stat[0],
+  //     );
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: row))
+  //         .value = TextCellValue(
+  //       stat[1],
+  //     );
+  //     row++;
+  //   }
 
-    sheet.setColumnAutoFit(0);
-    sheet.setColumnAutoFit(1);
-  }
+  //   sheet.setColumnAutoFit(0);
+  //   sheet.setColumnAutoFit(1);
+  // }
 
   // Method untuk menyimpan file Excel
-  Future<String?> _saveExcelFile(Excel excel, String fileName) async {
-    try {
-      final bytes = excel.save();
-      if (bytes == null) return null;
+  // Future<String?> _saveExcelFile(Excel excel, String fileName) async {
+  //   try {
+  //     final bytes = excel.save();
+  //     if (bytes == null) return null;
 
-      Directory? directory;
+  //     Directory? directory;
 
-      if (Platform.isAndroid) {
-        directory = await getExternalStorageDirectory();
-        directory ??= await getApplicationDocumentsDirectory();
-      } else {
-        directory = await getApplicationDocumentsDirectory();
-      }
+  //     if (Platform.isAndroid) {
+  //       directory = await getExternalStorageDirectory();
+  //       directory ??= await getApplicationDocumentsDirectory();
+  //     } else {
+  //       directory = await getApplicationDocumentsDirectory();
+  //     }
 
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final filePath = '${directory.path}/${fileName}_$timestamp.xlsx';
+  //     final timestamp = DateTime.now().millisecondsSinceEpoch;
+  //     final filePath = '${directory.path}/${fileName}_$timestamp.xlsx';
 
-      final file = File(filePath);
-      await file.writeAsBytes(bytes);
+  //     final file = File(filePath);
+  //     await file.writeAsBytes(bytes);
 
-      return filePath;
-    } catch (e) {
-      print('Error saving Excel file: $e');
-      return null;
-    }
-  }
+  //     return filePath;
+  //   } catch (e) {
+  //     print('Error saving Excel file: $e');
+  //     return null;
+  //   }
+  // }
 
   // Method untuk menampilkan dialog sukses backup
-  void _showBackupSuccessDialog(String filePath) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 28),
-            SizedBox(width: 8),
-            Text('Backup Berhasil!'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('File backup telah berhasil dibuat.'),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                'Lokasi: $filePath',
-                style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Tutup'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _shareBackupFile(filePath);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF8B4513),
-            ),
-            child: const Text('Bagikan', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
+  // void _showBackupSuccessDialog(String filePath) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: const Row(
+  //         children: [
+  //           Icon(Icons.check_circle, color: Colors.green, size: 28),
+  //           SizedBox(width: 8),
+  //           Text('Backup Berhasil!'),
+  //         ],
+  //       ),
+  //       content: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           const Text('File backup telah berhasil dibuat.'),
+  //           const SizedBox(height: 12),
+  //           Container(
+  //             padding: const EdgeInsets.all(12),
+  //             decoration: BoxDecoration(
+  //               color: Colors.grey[100],
+  //               borderRadius: BorderRadius.circular(8),
+  //             ),
+  //             child: Text(
+  //               'Lokasi: $filePath',
+  //               style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: const Text('Tutup'),
+  //         ),
+  //         ElevatedButton(
+  //           onPressed: () {
+  //             Navigator.pop(context);
+  //             _shareBackupFile(filePath);
+  //           },
+  //           style: ElevatedButton.styleFrom(
+  //             backgroundColor: const Color(0xFF8B4513),
+  //           ),
+  //           child: const Text('Bagikan', style: TextStyle(color: Colors.white)),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   // Method untuk share file backup
-  Future<void> _shareBackupFile(String filePath) async {
-    try {
-      await Share.shareXFiles([
-        XFile(filePath),
-      ], text: 'Backup data Warkop Bunny - ${_formatDate(DateTime.now())}');
-    } catch (e) {
-      _showErrorSnackBar('Error saat membagikan file: $e');
-    }
-  }
+  // Future<void> _shareBackupFile(String filePath) async {
+  //   try {
+  //     await Share.shareXFiles([
+  //       XFile(filePath),
+  //     ], text: 'Backup data Warkop Bunny - ${_formatDate(DateTime.now())}');
+  //   } catch (e) {
+  //     _showErrorSnackBar('Error saat membagikan file: $e');
+  //   }
+  // }
 
   // Update method _performBackup yang sudah ada (bisa dihapus karena diganti dengan yang baru)
-  void _showComingSoonDialog(BuildContext context, String feature) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            const Icon(Icons.construction, color: Color(0xFFFF8C00)),
-            const SizedBox(width: 8),
-            Text('$feature - Coming Soon'),
-          ],
-        ),
-        content: Text(
-          'Fitur $feature sedang dalam pengembangan dan akan segera tersedia dalam update mendatang.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
+  // void _showComingSoonDialog(BuildContext context, String feature) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: Row(
+  //         children: [
+  //           const Icon(Icons.construction, color: Color(0xFFFF8C00)),
+  //           const SizedBox(width: 8),
+  //           Text('$feature - Coming Soon'),
+  //         ],
+  //       ),
+  //       content: Text(
+  //         'Fitur $feature sedang dalam pengembangan dan akan segera tersedia dalam update mendatang.',
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.pop(context),
+  //           child: const Text('OK'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   void _showHelpDialog(BuildContext context) {
     showDialog(
