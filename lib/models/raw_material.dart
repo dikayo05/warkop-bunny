@@ -1,5 +1,5 @@
 class RawMaterial {
-  String id;
+  int id;
   String name;
   String supplier;
   int stock;
@@ -22,7 +22,7 @@ class RawMaterial {
   });
 
   factory RawMaterial.fromJson(Map<String, dynamic> json) => RawMaterial(
-        id: json['id'].toString(),
+        id: json['id'],
         name: json['name'],
         supplier: json['supplier'],
         stock: json['stock'],

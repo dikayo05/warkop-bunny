@@ -93,12 +93,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     _showSuccessSnackBar('Produk berhasil diperbarui');
   }
 
-  Future<void> _deleteProduct(String productId) async {
-    await supabase.from('products').delete().eq('id', productId);
-    setState(() {
-      products.removeWhere((p) => p.id == productId);
-    });
-    _showSuccessSnackBar('Produk berhasil dihapus');
+  Future<void> _deleteProduct(int productId) async {
+    try {
+      await supabase.from('products').delete().eq('id', productId);
+      setState(() {
+        products.removeWhere((p) => p.id == productId);
+      });
+      _showSuccessSnackBar('Produk berhasil dihapus');
+      print('Produk dengan ID $productId berhasil dihapus');
+    } catch (e) {
+      print(e);
+    }
   }
 
   // CRUD with Supabase for RawMaterial
@@ -128,7 +133,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     _showSuccessSnackBar('Bahan baku berhasil diperbarui');
   }
 
-  Future<void> _deleteRawMaterial(String materialId) async {
+  Future<void> _deleteRawMaterial(int materialId) async {
     await supabase.from('raw_materials').delete().eq('id', materialId);
     setState(() {
       rawMaterials.removeWhere((m) => m.id == materialId);
@@ -168,7 +173,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     _showSuccessSnackBar('Data penjualan berhasil diperbarui');
   }
 
-  Future<void> _deleteSale(String saleId) async {
+  Future<void> _deleteSale(int saleId) async {
     await supabase.from('sales').delete().eq('id', saleId);
     setState(() {
       final saleToDelete = sales.firstWhere((s) => s.id == saleId);
@@ -1281,7 +1286,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         date1.day == date2.day;
   }
 
-  String _getProductUnit(String productId) {
+  String _getProductUnit(int productId) {
     try {
       return products.firstWhere((p) => p.id == productId).unit;
     } catch (e) {
@@ -1520,12 +1525,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         _showProductForm(context, product: product);
                         break;
                       case 'delete':
-                        _showDeleteConfirmation(
-                          context,
-                          'Hapus Produk',
-                          'Apakah Anda yakin ingin menghapus ${product.name}?',
-                          () => _deleteProduct(product.id),
-                        );
+                        _deleteProduct(product.id);
                         break;
                     }
                   },
@@ -2548,7 +2548,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
 
     String selectedCategory =
-        product?.category ?? (categories.isNotEmpty ? categories.first : '');
+        product?.category ?? (categories.isNotEmpty ? categories.first : '--');
 
     showDialog(
       context: context,
@@ -2735,9 +2735,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 descriptionController,
               )) {
                 final newProduct = Product(
-                  id:
-                      product?.id ??
-                      DateTime.now().millisecondsSinceEpoch.toString(),
+                  id: product?.id ?? DateTime.now().millisecondsSinceEpoch,
                   name: nameController.text,
                   category: selectedCategory,
                   price: double.parse(priceController.text),
@@ -2972,9 +2970,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     priceController,
                   )) {
                     final newMaterial = RawMaterial(
-                      id:
-                          material?.id ??
-                          DateTime.now().millisecondsSinceEpoch.toString(),
+                      id: material?.id ?? DateTime.now().millisecondsSinceEpoch,
                       name: nameController.text,
                       supplier: supplierController.text,
                       stock: int.parse(stockController.text),
@@ -3009,7 +3005,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   void _showSaleForm(BuildContext context, {Sale? sale}) {
-    String? selectedProductId = sale?.productId;
+    int? selectedProductId = sale?.productId;
     final quantityController = TextEditingController(
       text: sale?.quantity.toString() ?? '',
     );
@@ -3061,7 +3057,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // DROPDOWN PRODUK SEDERHANA
-                    DropdownButtonFormField<String>(
+                    DropdownButtonFormField<int>(
                       value: selectedProductId,
                       isExpanded: true,
                       decoration: const InputDecoration(
@@ -3070,7 +3066,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         prefixIcon: Icon(Icons.fastfood),
                       ),
                       items: products.map((product) {
-                        return DropdownMenuItem(
+                        return DropdownMenuItem<int>(
                           value: product.id,
                           child: Text(
                             product.name,
@@ -3351,9 +3347,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     customerNameController,
                   )) {
                     final newSale = Sale(
-                      id:
-                          sale?.id ??
-                          DateTime.now().millisecondsSinceEpoch.toString(),
+                      id: sale?.id ?? DateTime.now().millisecondsSinceEpoch,
                       productId: selectedProductId!,
                       productName: products
                           .firstWhere((p) => p.id == selectedProductId)
@@ -3481,7 +3475,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   bool _validateSaleForm(
-    String? productId,
+    int? productId,
     TextEditingController quantity,
     TextEditingController customerName,
   ) {
@@ -3684,20 +3678,20 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   ],
 
                   // General notifications
-                  const ListTile(
-                    leading: Icon(Icons.celebration, color: Colors.green),
-                    title: Text('Target Penjualan Tercapai'),
-                    subtitle: Text(
-                      'Penjualan hari ini mencapai target yang ditetapkan',
-                    ),
-                    trailing: Text('Hari ini'),
-                  ),
-                  const ListTile(
-                    leading: Icon(Icons.backup, color: Colors.blue),
-                    title: Text('Backup Otomatis Berhasil'),
-                    subtitle: Text('Data berhasil di-backup secara otomatis'),
-                    trailing: Text('1 jam lalu'),
-                  ),
+                  // const ListTile(
+                  //   leading: Icon(Icons.celebration, color: Colors.green),
+                  //   title: Text('Target Penjualan Tercapai'),
+                  //   subtitle: Text(
+                  //     'Penjualan hari ini mencapai target yang ditetapkan',
+                  //   ),
+                  //   trailing: Text('Hari ini'),
+                  // ),
+                  // const ListTile(
+                  //   leading: Icon(Icons.backup, color: Colors.blue),
+                  //   title: Text('Backup Otomatis Berhasil'),
+                  //   subtitle: Text('Data berhasil di-backup secara otomatis'),
+                  //   trailing: Text('1 jam lalu'),
+                  // ),
                 ],
               ),
             ),

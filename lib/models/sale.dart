@@ -1,6 +1,6 @@
 class Sale {
-  String id;
-  String productId;
+  int id;
+  int productId;
   String productName;
   int quantity;
   double unitPrice;
@@ -22,8 +22,8 @@ class Sale {
   });
 
   factory Sale.fromJson(Map<String, dynamic> json) => Sale(
-        id: json['id'].toString(),
-        productId: json['product_id'].toString(),
+        id: json['id'],
+        productId: json['product_id'],
         productName: json['product_name'],
         quantity: json['quantity'],
         unitPrice: (json['unit_price'] as num).toDouble(),
