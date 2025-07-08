@@ -34,6 +34,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   final supabase = Supabase.instance.client;
   final _authService = AuthService();
   String? name;
+  String? role;
 
   Future<void> _fetchAllData() async {
     await Future.wait([_fetchProducts(), _fetchRawMaterials(), _fetchSales()]);
@@ -213,7 +214,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _fetchAllData();
-    _fetchName();
+    _fetchUser();
     _setupAnimations();
     // _initializeSampleData();
     _animationController.forward();
@@ -247,18 +248,19 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> _fetchName() async {
-    final user = Supabase.instance.client.auth.currentUser;
+  Future<void> _fetchUser() async {
+    final admin = Supabase.instance.client.auth.currentUser;
 
-    if (user != null) {
+    if (admin != null) {
       final response = await Supabase.instance.client
           .from('profiles')
-          .select('name')
-          .eq('id', user.id)
+          .select('name, role')
+          .eq('id', admin.id)
           .single();
 
       setState(() {
         name = response['name'];
+        role = response['role'];
       });
     }
   }
@@ -293,8 +295,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     _buildWelcomeSection(),
                     const SizedBox(height: 24),
                     _buildStatsGrid(isTablet),
-                    const SizedBox(height: 24),
-                    _buildQuickActions(isTablet),
+                    // const SizedBox(height: 24),
+                    // _buildQuickActions(isTablet),
                     const SizedBox(height: 24),
                     _buildMainMenuGrid(context, isTablet),
                     const SizedBox(height: 24),
@@ -1212,11 +1214,22 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       ),
                     ),
                     const Spacer(),
-                    FloatingActionButton.small(
-                      onPressed: () => _showProductForm(context),
-                      backgroundColor: const Color(0xFF2E8B57),
-                      child: const Icon(Icons.add, color: Colors.white),
-                    ),
+                    // TextButton(
+                    //   onPressed: () => _showProductForm(context),
+                    //   child: const Text(
+                    //     'Tambah Produk',
+                    //     style: TextStyle(
+                    //       color: Color(0xFF2E8B57),
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    //   ),
+                    // ),
+                    if (role == 'admin')
+                      FloatingActionButton.small(
+                        onPressed: () => _showProductForm(context),
+                        backgroundColor: const Color(0xFF2E8B57),
+                        child: const Icon(Icons.add, color: Colors.white),
+                      ),
                   ],
                 ),
               ),
@@ -1288,40 +1301,41 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
-                PopupMenuButton(
-                  onSelected: (value) {
-                    switch (value) {
-                      case 'edit':
-                        _showProductForm(context, product: product);
-                        break;
-                      case 'delete':
-                        _deleteProduct(product.id);
-                        break;
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit, size: 20),
-                          SizedBox(width: 8),
-                          Text('Edit'),
-                        ],
+                if (role == 'admin')
+                  PopupMenuButton(
+                    onSelected: (value) {
+                      switch (value) {
+                        case 'edit':
+                          _showProductForm(context, product: product);
+                          break;
+                        case 'delete':
+                          _deleteProduct(product.id);
+                          break;
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit, size: 20),
+                            SizedBox(width: 8),
+                            Text('Edit'),
+                          ],
+                        ),
                       ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete, color: Colors.red, size: 20),
-                          SizedBox(width: 8),
-                          Text('Hapus', style: TextStyle(color: Colors.red)),
-                        ],
+                      const PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            Icon(Icons.delete, color: Colors.red, size: 20),
+                            SizedBox(width: 8),
+                            Text('Hapus', style: TextStyle(color: Colors.red)),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
               ],
             ),
             const SizedBox(height: 12),
@@ -1449,11 +1463,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       ),
                     ),
                     const Spacer(),
-                    FloatingActionButton.small(
-                      onPressed: () => _showRawMaterialForm(context),
-                      backgroundColor: const Color(0xFF4682B4),
-                      child: const Icon(Icons.add, color: Colors.white),
-                    ),
+                    if (role == 'admin')
+                      FloatingActionButton.small(
+                        onPressed: () => _showRawMaterialForm(context),
+                        backgroundColor: const Color(0xFF4682B4),
+                        child: const Icon(Icons.add, color: Colors.white),
+                      ),
                   ],
                 ),
               ),
@@ -1525,45 +1540,46 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
-                PopupMenuButton(
-                  onSelected: (value) {
-                    switch (value) {
-                      case 'edit':
-                        _showRawMaterialForm(context, material: material);
-                        break;
-                      case 'delete':
-                        ShowDeleteConfirmation(
-                          context,
-                          'Hapus Bahan Baku',
-                          'Apakah Anda yakin ingin menghapus ${material.name}?',
-                          () => _deleteRawMaterial(material.id),
-                        );
-                        break;
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit, size: 20),
-                          SizedBox(width: 8),
-                          Text('Edit'),
-                        ],
+                if (role == 'admin')
+                  PopupMenuButton(
+                    onSelected: (value) {
+                      switch (value) {
+                        case 'edit':
+                          _showRawMaterialForm(context, material: material);
+                          break;
+                        case 'delete':
+                          ShowDeleteConfirmation(
+                            context,
+                            'Hapus Bahan Baku',
+                            'Apakah Anda yakin ingin menghapus ${material.name}?',
+                            () => _deleteRawMaterial(material.id),
+                          );
+                          break;
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit, size: 20),
+                            SizedBox(width: 8),
+                            Text('Edit'),
+                          ],
+                        ),
                       ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete, color: Colors.red, size: 20),
-                          SizedBox(width: 8),
-                          Text('Hapus', style: TextStyle(color: Colors.red)),
-                        ],
+                      const PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            Icon(Icons.delete, color: Colors.red, size: 20),
+                            SizedBox(width: 8),
+                            Text('Hapus', style: TextStyle(color: Colors.red)),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
               ],
             ),
             const SizedBox(height: 12),
@@ -3557,15 +3573,26 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
                 children: [
-                  _buildQuickModalAction(
-                    'Tambah\nProduk',
-                    Icons.add_box,
-                    const Color(0xFF2E8B57),
-                    () {
-                      Navigator.pop(context);
-                      _showProductForm(context);
-                    },
-                  ),
+                  if (role == 'admin')
+                    _buildQuickModalAction(
+                      'Tambah\nProduk',
+                      Icons.add_box,
+                      const Color(0xFF2E8B57),
+                      () {
+                        Navigator.pop(context);
+                        _showProductForm(context);
+                      },
+                    ),
+                  if (role == 'admin')
+                    _buildQuickModalAction(
+                      'Tambah\nBahan Baku',
+                      Icons.inventory,
+                      const Color(0xFFFF8C00),
+                      () {
+                        Navigator.pop(context);
+                        _showRawMaterialForm(context);
+                      },
+                    ),
                   _buildQuickModalAction(
                     'Catat\nPenjualan',
                     Icons.point_of_sale,
@@ -3575,42 +3602,33 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       _showSaleForm(context);
                     },
                   ),
-                  _buildQuickModalAction(
-                    'Tambah\nBahan Baku',
-                    Icons.inventory,
-                    const Color(0xFFFF8C00),
-                    () {
-                      Navigator.pop(context);
-                      _showRawMaterialForm(context);
-                    },
-                  ),
-                  _buildQuickModalAction(
-                    'Lihat\nStok Produk',
-                    Icons.restaurant_menu,
-                    const Color(0xFF9370DB),
-                    () {
-                      Navigator.pop(context);
-                      _navigateToProductStock(context);
-                    },
-                  ),
-                  _buildQuickModalAction(
-                    'Lihat\nBahan Baku',
-                    Icons.inventory_2,
-                    const Color(0xFFDC143C),
-                    () {
-                      Navigator.pop(context);
-                      _navigateToRawMaterials(context);
-                    },
-                  ),
-                  _buildQuickModalAction(
-                    'Lihat\nPenjualan',
-                    Icons.receipt_long,
-                    const Color(0xFF708090),
-                    () {
-                      Navigator.pop(context);
-                      _navigateToSalesRecord(context);
-                    },
-                  ),
+                  // _buildQuickModalAction(
+                  //   'Lihat\nStok Produk',
+                  //   Icons.restaurant_menu,
+                  //   const Color(0xFF9370DB),
+                  //   () {
+                  //     Navigator.pop(context);
+                  //     _navigateToProductStock(context);
+                  //   },
+                  // ),
+                  // _buildQuickModalAction(
+                  //   'Lihat\nBahan Baku',
+                  //   Icons.inventory_2,
+                  //   const Color(0xFFDC143C),
+                  //   () {
+                  //     Navigator.pop(context);
+                  //     _navigateToRawMaterials(context);
+                  //   },
+                  // ),
+                  // _buildQuickModalAction(
+                  //   'Lihat\nPenjualan',
+                  //   Icons.receipt_long,
+                  //   const Color(0xFF708090),
+                  //   () {
+                  //     Navigator.pop(context);
+                  //     _navigateToSalesRecord(context);
+                  //   },
+                  // ),
                 ],
               ),
             ),
