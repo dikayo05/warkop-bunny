@@ -15,6 +15,8 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
   final AuthService _authService = AuthService();
   List<Profile> profiles = [];
   bool isLoading = true;
+  String? _selectedValue = 'user'; // Default selected value for role
+  final List<String> _roleItems = ['user', 'admin'];
 
   @override
   void initState() {
@@ -47,11 +49,29 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
               controller: nameController,
               decoration: const InputDecoration(labelText: 'Nama'),
             ),
+            // TextField(
+            //   controller: emailController,
+            //   decoration: const InputDecoration(labelText: 'Email'),
+            // ),
             TextField(
               controller: phoneNumberController,
               decoration: const InputDecoration(labelText: 'Nomor Telepon'),
             ),
-            // TextField(controller: emailController, decoration: const InputDecoration(labelText: 'Email')),
+            // pilih role
+            DropdownButton<String>(
+              value: _selectedValue,
+              items: _roleItems.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedValue = newValue;
+                });
+              },
+            ),
           ],
         ),
         actions: [
