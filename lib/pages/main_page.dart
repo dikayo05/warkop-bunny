@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 // import 'package:permission_handler/permission_handler.dart';
 // import 'package:share_plus/share_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:warkop_bunny/pages/manage_account_page.dart';
 import 'package:warkop_bunny/services/auth/auth_service.dart';
 import 'package:warkop_bunny/models/product.dart';
 import 'package:warkop_bunny/models/raw_material.dart';
@@ -824,6 +825,20 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   () => _showReportsDialog(context),
                   cardWidth,
                 ),
+                if (role == 'admin')
+                  _buildMenuCard(
+                    'Kelola Akun',
+                    'Kelola akun pengguna dan hak akses',
+                    Icons.account_circle,
+                    const Color(0xFF5E5E5E),
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ManageAccountPage(),
+                      ),
+                    ),
+                    cardWidth,
+                  ),
               ],
             ),
           ],

@@ -7,7 +7,6 @@ class Product {
   String unit;
   String description;
   DateTime createdAt;
-  String imageUrl;
 
   Product({
     required this.id,
@@ -18,7 +17,6 @@ class Product {
     required this.unit,
     required this.description,
     required this.createdAt,
-    this.imageUrl = '',
   });
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
@@ -30,7 +28,6 @@ class Product {
         unit: json['unit'],
         description: json['description'],
         createdAt: DateTime.parse(json['created_at']),
-        imageUrl: json['image_url'] ?? '',
       );
 
   Map<String, dynamic> toJson() => {
@@ -42,6 +39,5 @@ class Product {
         'unit': unit,
         'description': description,
         'created_at': createdAt.toIso8601String(),
-        'image_url': imageUrl,
       };
 }
