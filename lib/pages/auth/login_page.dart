@@ -253,24 +253,24 @@ class _LoginPageState extends State<LoginPage> {
                             },
                           ),
                           
-                          SizedBox(height: 8),
+                          // SizedBox(height: 8),
                           
                           // Forgot Password
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () {
-                                // Handle forgot password
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Fitur lupa password belum tersedia')),
-                                );
-                              },
-                              child: Text(
-                                'Ubah Password?',
-                                style: TextStyle(color: Colors.brown[700]),
-                              ),
-                            ),
-                          ),
+                          // Align(
+                          //   alignment: Alignment.centerRight,
+                          //   child: TextButton(
+                          //     onPressed: () {
+                          //       // Handle forgot password
+                          //       ScaffoldMessenger.of(context).showSnackBar(
+                          //         SnackBar(content: Text('Fitur lupa password belum tersedia')),
+                          //       );
+                          //     },
+                          //     child: Text(
+                          //       'Ubah Password?',
+                          //       style: TextStyle(color: Colors.brown[700]),
+                          //     ),
+                          //   ),
+                          // ),
                           
                           SizedBox(height: 24),
                           

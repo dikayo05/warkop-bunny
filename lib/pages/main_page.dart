@@ -12,6 +12,7 @@ import 'package:warkop_bunny/models/raw_material.dart';
 import 'package:warkop_bunny/models/sale.dart';
 import 'package:warkop_bunny/pages/auth/login_page.dart';
 import 'package:warkop_bunny/services/product_service.dart';
+import 'package:warkop_bunny/services/sale_service.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -36,6 +37,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   final supabase = Supabase.instance.client;
   final _authService = AuthService();
   final _productService = ProductService();
+  final _saleService = SaleService();
 
   String? name;
   String? role;
@@ -81,6 +83,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     setState(() {
       products.add(Product.fromJson(response));
     });
+    _fetchProducts();
     _showSuccessSnackBar('Produk berhasil ditambahkan');
   }
 
@@ -100,7 +103,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   Future<void> _deleteProduct(int productId) async {
     try {
-      await supabase.from('products').delete().eq('id', productId);
+      // await supabase.from('products').delete().eq('id', productId);
+      _productService.delete(productId);
       setState(() {
         products.removeWhere((p) => p.id == productId);
       });
@@ -166,34 +170,42 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   Future<void> _updateSale(Sale updatedSale) async {
-    await supabase
-        .from('sales')
-        .update(updatedSale.toJson())
-        .eq('id', updatedSale.id);
+    // await supabase
+    //     .from('sales')
+    //     .update(updatedSale.toJson())
+    //     .eq('id', updatedSale.id);
+    _saleService.update(updatedSale);
     setState(() {
       final index = sales.indexWhere((s) => s.id == updatedSale.id);
       if (index != -1) {
         sales[index] = updatedSale;
-        // _productService
+        // _productService.update(
+        //   products.firstWhere((p) => p.id == updatedSale.productId),
+        // );
       }
     });
     _showSuccessSnackBar('Data penjualan berhasil diperbarui');
   }
 
   Future<void> _deleteSale(int saleId) async {
-    await supabase.from('sales').delete().eq('id', saleId);
-    setState(() {
-      final saleToDelete = sales.firstWhere((s) => s.id == saleId);
-      // Restore product stock locally
-      final productIndex = products.indexWhere(
-        (p) => p.id == saleToDelete.productId,
-      );
-      if (productIndex != -1) {
-        products[productIndex].stock += saleToDelete.quantity;
-        _productService.update(products[productIndex]);
-      }
-      sales.removeWhere((s) => s.id == saleId);
-    });
+    // await supabase.from('sales').delete().eq('id', saleId);
+    try {
+      await _saleService.delete(saleId);
+      setState(() {
+        final saleToDelete = sales.firstWhere((s) => s.id == saleId);
+        // Restore product stock locally
+        final productIndex = products.indexWhere(
+          (p) => p.id == saleToDelete.productId,
+        );
+        if (productIndex != -1) {
+          products[productIndex].stock += saleToDelete.quantity;
+          _productService.update(products[productIndex]);
+        }
+        sales.removeWhere((s) => s.id == saleId);
+      });
+    } catch (e) {
+      print('Error deleting sale: $e');
+    }
     _showSuccessSnackBar('Data penjualan berhasil dihapus');
   }
 
@@ -1559,12 +1571,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           _showRawMaterialForm(context, material: material);
                           break;
                         case 'delete':
-                          ShowDeleteConfirmation(
-                            context,
-                            'Hapus Bahan Baku',
-                            'Apakah Anda yakin ingin menghapus ${material.name}?',
-                            () => _deleteRawMaterial(material.id),
-                          );
+                          _deleteRawMaterial(material.id);
                           break;
                       }
                     },
@@ -1867,12 +1874,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         _showSaleForm(context, sale: sale);
                         break;
                       case 'delete':
-                        ShowDeleteConfirmation(
-                          context,
-                          'Hapus Penjualan',
-                          'Apakah Anda yakin ingin menghapus data penjualan ini?',
-                          () => _deleteSale(sale.id),
-                        );
+                        _deleteSale(sale.id);
                         break;
                     }
                   },
@@ -3916,6 +3918,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
+              _authService.signOut();
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const LoginPage()),

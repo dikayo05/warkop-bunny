@@ -34,8 +34,8 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
   void showForm({Profile? profile}) {
     final nameController = TextEditingController(text: profile?.name ?? '');
     // final emailController = TextEditingController(text: profile?.email ?? '');
-    final phoneNumberController = TextEditingController(
-      text: profile?.phoneNumber ?? '',
+    final roleController = TextEditingController(
+      text: profile?.role ?? '',
     );
 
     showDialog(
@@ -54,24 +54,24 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
             //   decoration: const InputDecoration(labelText: 'Email'),
             // ),
             TextField(
-              controller: phoneNumberController,
-              decoration: const InputDecoration(labelText: 'Nomor Telepon'),
+              controller: roleController,
+              decoration: const InputDecoration(labelText: 'Role'),
             ),
             // pilih role
-            DropdownButton<String>(
-              value: _selectedValue,
-              items: _roleItems.map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedValue = newValue;
-                });
-              },
-            ),
+            // DropdownButton<String>(
+            //   value: _selectedValue,
+            //   items: _roleItems.map((String value) {
+            //     return DropdownMenuItem<String>(
+            //       value: value,
+            //       child: Text(value),
+            //     );
+            //   }).toList(),
+            //   onChanged: (String? newValue) {
+            //     setState(() {
+            //       _selectedValue = newValue;
+            //     });
+            //   },
+            // ),
           ],
         ),
         actions: [
@@ -84,7 +84,7 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
               final newProfile = Profile(
                 id: profile?.id,
                 name: nameController.text,
-                phoneNumber: phoneNumberController.text,
+                phoneNumber: roleController.text,
                 // email: emailController.text,
               );
 
@@ -140,14 +140,14 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
                 final p = profiles[index];
                 return ListTile(
                   title: Text(p.name),
-                  subtitle: Text(p.phoneNumber ?? '-'),
+                  subtitle: Text(p.role ?? '-'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () => showForm(profile: p),
-                      ),
+                      // IconButton(
+                      //   icon: const Icon(Icons.edit),
+                      //   onPressed: () => showForm(profile: p),
+                      // ),
                       IconButton(
                         icon: const Icon(Icons.delete),
                         onPressed: () => confirmDelete(p.id!),
@@ -157,10 +157,10 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showForm(),
-        child: const Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () => showForm(),
+      //   child: const Icon(Icons.add),
+      // ),
     );
   }
 }

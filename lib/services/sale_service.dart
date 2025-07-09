@@ -30,7 +30,7 @@ class SaleService {
     return Sale.fromJson(data);
   }
 
-  Future<void> delete(String id) async {
+  Future<void> delete(int id) async {
     await _client.from(table).delete().eq('id', id);
   }
 }
